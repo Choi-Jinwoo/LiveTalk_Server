@@ -1,5 +1,5 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
-import _ from 'lodash';
+import * as _ from 'lodash';
 
 export abstract class Database {
   protected abstract composeOptions(): TypeOrmModuleOptions;

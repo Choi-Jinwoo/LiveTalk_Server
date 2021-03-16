@@ -26,7 +26,7 @@ export class MySQL extends Database {
       database: DATABASE,
       synchronize: SYNC,
       entities: [
-        entities,
+        ...entities,
       ],
     }
   }
