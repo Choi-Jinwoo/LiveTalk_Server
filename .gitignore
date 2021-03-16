@@ -5,6 +5,9 @@
 # .vscode
 /.vscode
 
+# environment
+.env
+
 # Logs
 logs
 *.log
