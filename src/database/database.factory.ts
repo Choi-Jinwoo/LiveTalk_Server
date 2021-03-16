@@ -7,6 +7,9 @@ export class DatabaseFactory {
     switch (type) {
       case DatabaseTypes.MYSQL:
         return new MySQL();
+
+      default:
+        throw new Error('Database Type이 지정되지 않았습니다.');
     }
   }
 }
