@@ -12,3 +12,12 @@ const getValue = (key: string): string => {
 };
 
 export const PORT = getValue('PORT');
+
+export const MYSQL = {
+  HOST: getValue('MYSQL_HOST'),
+  PORT: Number(getValue('MYSQL_PORT')),
+  USERNAME: getValue('MYSQL_USERNAME'),
+  PASSWORD: getValue('MYSQL_PASSWORD'),
+  DATABASE: getValue('MYSQL_DATABASE'),
+  SYNC: getValue('MYSQL_SYNC') === 'true',
+}
