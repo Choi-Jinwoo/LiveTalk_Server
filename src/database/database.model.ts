@@ -5,6 +5,6 @@ export abstract class Database {
   protected abstract composeOptions(): TypeOrmModuleOptions;
 
   options() {
-    return this.composeOptions();
+    return _.cloneDeep(this.composeOptions());
   }
 }
