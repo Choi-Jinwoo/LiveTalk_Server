@@ -7,6 +7,8 @@ import { DodamThirdParty } from 'third-party/dodam.third-party';
 import { TokenService } from 'token/token.service';
 import { DataNotFoundError } from 'errors/data-not-found';
 import { UserRepository } from './user.repository';
+import { RegisterDto } from 'auth/dto/register.dto';
+import { DuplicateError } from 'errors/duplicate.error';
 
 @Injectable()
 export class UserService {
@@ -20,9 +22,11 @@ export class UserService {
   async login(loginDto: LoginDto): Promise<string> {
     const { id, pw } = loginDto;
 
-    const user = await this.userRepository.findOne(id);
+    let user = await this.userRepository.findOne(id);
+    // 가입되지 않은 회원일 경우 새로운 회원 생성
     if (user === undefined) {
-      throw new DataNotFoundError(ErrorCode.MEMBER_NOT_REGISTERED);
+      user = new User();
+      user.id = id;
     }
 
     // 토큰 갱신

@@ -1,4 +1,5 @@
 import { Body, Controller, Post } from '@nestjs/common';
+import { BaseResponse } from 'models/http/base.response';
 import { UserService } from 'user/user.service';
 import { LoginDto } from './dto/login.dto';
 
@@ -10,6 +11,10 @@ export class AuthController {
 
   @Post()
   async login(@Body() loginDto: LoginDto) {
-    await this.userService.login(loginDto);
+    const token = await this.userService.login(loginDto);
+
+    return BaseResponse.object('로그인 성공', {
+      'x-access-token': token,
+    });
   }
 }
