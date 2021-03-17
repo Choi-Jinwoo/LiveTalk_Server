@@ -21,3 +21,10 @@ export const MYSQL = {
   DATABASE: getValue('MYSQL_DATABASE'),
   SYNC: getValue('MYSQL_SYNC') === 'true',
 }
+
+export const JWT = {
+  EXPIRES_IN: getValue('JWT_EXPIRES_IN'),
+  ISSUER: getValue('JWT_ISSUER'),
+  SECRET: getValue('JWT_SECRET'),
+  SUBJECT: getValue('JWT_SUBJECT'),
+}
