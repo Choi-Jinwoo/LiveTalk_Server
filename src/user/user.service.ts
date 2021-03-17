@@ -17,6 +17,10 @@ export class UserService {
     const { id, pw } = loginDto;
 
     // TODO: 로컬 회원 테이블 검색
+    const user = await this.userRepository.findOne(id);
+    if (user === undefined) {
+
+    }
 
     await this.dodamThirdParty.login(id, pw);
   }

@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import axios, { AxiosInstance } from 'axios';
 import { DODAM_URL } from 'config/endpoint';
+import { ErrorCode } from 'errors/error-code.enum';
+import { ExpiredError } from 'errors/expired.error';
 
 @Injectable()
 export class DodamThirdParty {
@@ -22,7 +24,7 @@ export class DodamThirdParty {
       (err) => {
         const { status } = err;
         if (status === 410) {
-          throw new ExpiredError('도담도담 토큰 만료');
+          throw new ExpiredError(ErrorCode.DODAM_TOKEN_EXPIRED);
         }
 
         throw err;
