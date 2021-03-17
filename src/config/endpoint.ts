@@ -1,0 +1,1 @@
+export const DODAM_URL = 'http://dodam.b1nd.com/api/v2';
