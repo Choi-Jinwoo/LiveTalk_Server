@@ -1,5 +1,6 @@
 import { ArgumentsHost, Catch, ExceptionFilter, HttpStatus } from '@nestjs/common';
 import { DataNotFoundError } from 'errors/data-not-found';
+import { ErrorCode } from 'errors/error-code.enum';
 import { ExpiredError } from 'errors/expired.error';
 import { ErrorResponse } from 'models/http/error.response';
 
@@ -23,7 +24,7 @@ export class HttpErrorFilter implements ExceptionFilter {
 
       default:
         errorResponse = ErrorResponse
-          .fromErrorCode(HttpStatus.GONE, err.errorCode);
+          .fromErrorCode(HttpStatus.INTERNAL_SERVER_ERROR, ErrorCode.SERVER_ERROR);
     }
 
     res.status(errorResponse.status).json(errorResponse);
