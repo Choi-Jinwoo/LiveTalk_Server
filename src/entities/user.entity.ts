@@ -8,7 +8,7 @@ export class User {
   id!: string;
 
   @Column({
-    name: 'token',
+    name: 'dodam_token',
   })
-  token!: string;
+  dodamToken!: string;
 }

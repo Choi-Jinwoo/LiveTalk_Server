@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from 'auth/auth.module';
 import { DatabaseTypes } from 'database/database.enum';
 import { DatabaseFactory } from 'database/database.factory';
+import { TokenModule } from 'token/token.module';
 import { UserModule } from 'user/user.module';
 
 @Module({
@@ -12,6 +13,7 @@ import { UserModule } from 'user/user.module';
     ),
     UserModule,
     AuthModule,
+    TokenModule,
   ],
 })
 export class AppModule { }

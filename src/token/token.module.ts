@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TokenService } from './token.service';
 
 @Module({
-  providers: [TokenService]
+  providers: [TokenService],
+  exports: [TokenService],
 })
-export class TokenModule {}
+export class TokenModule { }
