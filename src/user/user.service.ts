@@ -5,7 +5,7 @@ import { User } from 'entities/user.entity';
 import { ErrorCode } from 'errors/error-code.enum';
 import { DodamThirdParty } from 'third-party/dodam.third-party';
 import { TokenService } from 'token/token.service';
-import { DataNotFounded } from './data-not-founded';
+import { DataNotFoundError } from 'errors/data-not-found';
 import { UserRepository } from './user.repository';
 
 @Injectable()
@@ -22,7 +22,7 @@ export class UserService {
 
     const user = await this.userRepository.findOne(id);
     if (user === undefined) {
-      throw new DataNotFounded(ErrorCode.MEMBER_NOT_REGISTERED);
+      throw new DataNotFoundError(ErrorCode.MEMBER_NOT_REGISTERED);
     }
 
     // 토큰 갱신

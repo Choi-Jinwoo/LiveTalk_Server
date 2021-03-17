@@ -9,7 +9,7 @@ export class AuthController {
   ) { }
 
   @Post()
-  login(@Body() loginDto: LoginDto) {
-    this.userService.login(loginDto);
+  async login(@Body() loginDto: LoginDto) {
+    await this.userService.login(loginDto);
   }
 }
