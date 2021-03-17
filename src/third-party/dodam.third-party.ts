@@ -20,10 +20,29 @@ export class DodamThirdParty {
         return res;
       },
       (err) => {
-        console.log(err);
+        const { status } = err;
+        if (status === 410) {
+          throw new ExpiredError('도담도담 토큰 만료');
+        }
+
+        throw err;
       });
   }
 
-  async login(id: string, pw: string) {
+  async login(id: string, pw: string): Promise<string> {
+    try {
+      const res = await this.axiosInstance.post(`${DODAM_URL}/auth/login`, {
+        id,
+        pw,
+      });
+
+      const { data: { data } } = res;
+      const token = data['token'];
+
+      return token;
+    } catch (err) {
+      console.log(err);
+      throw err;
+    }
   }
 }
