@@ -1,4 +1,6 @@
 import { ArgumentsHost, BadRequestException, Catch, ExceptionFilter, HttpStatus } from '@nestjs/common';
+import { AuthFailedError } from 'errors/auth-failed';
+import { DataConflictError } from 'errors/data-conflict';
 import { DataNotFoundError } from 'errors/data-not-found';
 import { ErrorCode } from 'errors/error-code.enum';
 import { ExpiredError } from 'errors/expired.error';
@@ -17,9 +19,19 @@ export class HttpErrorFilter implements ExceptionFilter {
           .fromErrorCode(HttpStatus.BAD_REQUEST, ErrorCode.INVALID_INPUT);
         break;
 
+      case AuthFailedError:
+        errorResponse = ErrorResponse
+          .fromErrorCode(HttpStatus.UNAUTHORIZED, err.errorCode);
+        break;
+
       case DataNotFoundError:
         errorResponse = ErrorResponse
           .fromErrorCode(HttpStatus.NOT_FOUND, err.errorCode);
+        break;
+
+      case DataConflictError:
+        errorResponse = ErrorResponse
+          .fromErrorCode(HttpStatus.CONFLICT, err.errorCode);
         break;
 
       case ExpiredError:

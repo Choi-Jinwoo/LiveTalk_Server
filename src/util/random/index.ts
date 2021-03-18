@@ -1,6 +1,6 @@
 abstract class Random {
   constructor(
-    private readonly length: number,
+    protected readonly length: number,
   ) { }
 
   abstract rand(): string;
@@ -16,7 +16,7 @@ export class CharRandom extends Random {
     const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
     var charactersLength = characters.length;
 
-    for (let i = 0; i < length; i += 1) {
+    for (let i = 0; i < this.length; i += 1) {
       code += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
     return code;
@@ -33,7 +33,7 @@ export class NumberRandom extends Random {
     const characters = '0123456789';
     var charactersLength = characters.length;
 
-    for (let i = 0; i < length; i += 1) {
+    for (let i = 0; i < this.length; i += 1) {
       code += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
     return code;

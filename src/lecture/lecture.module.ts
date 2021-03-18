@@ -1,14 +1,36 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
 import { LectureService } from './lecture.service';
 import { LectureController } from './lecture.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Lecture } from 'entities/lecture.entity';
+import { JwtMiddleware } from 'middleware/jwt.middleware';
+import { AuditorModule } from 'auditor/auditor.module';
+import { LectureRepository } from './lecture.repository';
+import { TokenModule } from 'token/token.module';
+import { UserModule } from 'user/user.module';
+import { AuditorRepository } from 'auditor/auditor.repository';
+import { UserRepository } from 'user/user.repository';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Lecture]),
+    TypeOrmModule.forFeature([
+      LectureRepository,
+      AuditorRepository,
+      UserRepository
+    ]),
+    TokenModule,
   ],
   providers: [LectureService],
   controllers: [LectureController],
 })
-export class LectureModule { }
+export class LectureModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(JwtMiddleware)
+      .forRoutes(
+        {
+          path: '/lecture/join',
+          method: RequestMethod.POST
+        },
+      )
+  }
+}
