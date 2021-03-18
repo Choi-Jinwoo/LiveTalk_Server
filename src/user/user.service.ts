@@ -2,27 +2,43 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LoginDto } from 'auth/dto/login.dto';
 import { User } from 'entities/user.entity';
-import { ErrorCode } from 'errors/error-code.enum';
 import { DodamThirdParty } from 'third-party/dodam.third-party';
 import { TokenService } from 'token/token.service';
-import { DataNotFoundError } from 'errors/data-not-found';
 import { UserRepository } from './user.repository';
-import { RegisterDto } from 'auth/dto/register.dto';
-import { DuplicateError } from 'errors/duplicate.error';
+import { Subject } from 'rxjs';
+import { RedisClientService } from 'redis-client/redis-client.service';
 
 @Injectable()
 export class UserService {
+  private readonly user$: Subject<User> = new Subject();
+
   constructor(
     @InjectRepository(User)
     private readonly userRepository: UserRepository,
     private readonly dodamThirdParty: DodamThirdParty,
     private readonly tokenService: TokenService,
-  ) { }
+    private readonly redisClientService: RedisClientService,
+  ) {
+    this.user$.subscribe({
+      next: (user) => {
+        this.userRepository.save(user);
+      },
+    });
+
+    this.user$.subscribe({
+      next: async (user) => {
+        const { id, dodamToken } = user;
+
+        this.redisClientService.set(id, dodamToken);
+      },
+    })
+  }
 
   async login(loginDto: LoginDto): Promise<string> {
     const { id, pw } = loginDto;
 
     let user = await this.userRepository.findOne(id);
+
     // 가입되지 않은 회원일 경우 새로운 회원 생성
     if (user === undefined) {
       user = new User();
@@ -32,7 +48,8 @@ export class UserService {
     // 토큰 갱신
     const dodamToken = await this.dodamThirdParty.login(id, pw);
     user.dodamToken = dodamToken;
-    await this.userRepository.save(user);
+
+    await this.user$.next(user);
 
     const token = this.tokenService.createToken(user);
 

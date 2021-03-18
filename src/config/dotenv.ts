@@ -22,6 +22,12 @@ export const MYSQL = {
   SYNC: getValue('MYSQL_SYNC') === 'true',
 }
 
+export const REDIS = {
+  HOST: getValue('REDIS_HOST'),
+  PORT: Number(getValue('REDIS_PORT')),
+  DB: getValue('REDIS_DB'),
+}
+
 export const JWT = {
   EXPIRES_IN: getValue('JWT_EXPIRES_IN'),
   ISSUER: getValue('JWT_ISSUER'),
