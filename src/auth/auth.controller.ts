@@ -10,7 +10,7 @@ export class AuthController {
   ) { }
 
   @Post()
-  async login(@Body() loginDto: LoginDto) {
+  async login(@Body() loginDto: LoginDto): Promise<BaseResponse> {
     const token = await this.userService.login(loginDto);
 
     return BaseResponse.object('로그인 성공', {

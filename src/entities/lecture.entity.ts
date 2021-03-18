@@ -20,7 +20,7 @@ export class Lecture {
   @Column({
     name: 'is_closed',
   })
-  isClosed!: boolean;
+  isClosed: boolean = false;
 
   @Column({
     name: 'admin_code',

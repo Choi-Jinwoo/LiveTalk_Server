@@ -1,4 +1,4 @@
-import { ArgumentsHost, Catch, ExceptionFilter, HttpStatus } from '@nestjs/common';
+import { ArgumentsHost, BadRequestException, Catch, ExceptionFilter, HttpStatus } from '@nestjs/common';
 import { DataNotFoundError } from 'errors/data-not-found';
 import { ErrorCode } from 'errors/error-code.enum';
 import { ExpiredError } from 'errors/expired.error';
@@ -12,6 +12,11 @@ export class HttpErrorFilter implements ExceptionFilter {
 
     let errorResponse = null;
     switch (err.constructor) {
+      case BadRequestException:
+        errorResponse = ErrorResponse
+          .fromErrorCode(HttpStatus.BAD_REQUEST, ErrorCode.INVALID_INPUT);
+        break;
+
       case DataNotFoundError:
         errorResponse = ErrorResponse
           .fromErrorCode(HttpStatus.NOT_FOUND, err.errorCode);
@@ -26,6 +31,8 @@ export class HttpErrorFilter implements ExceptionFilter {
         errorResponse = ErrorResponse
           .fromErrorCode(HttpStatus.INTERNAL_SERVER_ERROR, ErrorCode.SERVER_ERROR);
     }
+
+    console.log(err);
 
     res.status(errorResponse.status).json(errorResponse);
   }
