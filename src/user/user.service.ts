@@ -19,6 +19,10 @@ export class UserService {
     private readonly tokenService: TokenService,
     private readonly redisClientService: RedisClientService,
   ) {
+    this.subscribeUserSave();
+  }
+
+  private subscribeUserSave() {
     this.user$.subscribe({
       next: (user) => {
         this.userRepository.save(user);
