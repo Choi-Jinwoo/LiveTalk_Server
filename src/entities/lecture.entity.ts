@@ -14,6 +14,7 @@ export class Lecture {
 
   @Column({
     name: 'join_code',
+    unique: true,
   })
   joinCode!: string;
 
@@ -24,6 +25,7 @@ export class Lecture {
 
   @Column({
     name: 'admin_code',
+    unique: true,
   })
   adminCode!: string;
 
