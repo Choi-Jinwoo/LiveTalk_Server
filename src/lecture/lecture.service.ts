@@ -9,6 +9,7 @@ import { DataConflictError } from 'errors/data-conflict';
 import { DataNotFoundError } from 'errors/data-not-found';
 import { ErrorCode } from 'errors/error-code.enum';
 import { ExpiredError } from 'errors/expired.error';
+import { LectureGateway } from 'lecture/lecture.gateway';
 import { CharRandom, NumberRandom } from 'util/random';
 import { CreateLectureDto } from './dto/create-lecture.dto';
 import { JoinLectureDto } from './dto/join-lecture.dto';
@@ -22,6 +23,8 @@ export class LectureService {
 
     @InjectRepository(Auditor)
     private readonly auditorRepository: AuditorRepository,
+
+    private readonly lectureGateway: LectureGateway,
   ) { }
 
   async create(createLectureDto: CreateLectureDto): Promise<Lecture> {
@@ -47,15 +50,14 @@ export class LectureService {
     }
 
     const duplicateAuditor = await this.auditorRepository.findByLectureAndUser(lecture.id, joinUser.id);
-    if (duplicateAuditor !== undefined) {
-      throw new DataConflictError(ErrorCode.ALREADY_JOINED);
+    if (duplicateAuditor === undefined) {
+      const auditor = new Auditor();
+      auditor.lecture = lecture;
+      auditor.user = joinUser;
+
+      await this.auditorRepository.save(auditor);
     }
 
-    const auditor = new Auditor();
-    auditor.lecture = lecture;
-    auditor.user = joinUser;
-
-    await this.auditorRepository.save(auditor);
     // TODO: Socket 작업
   }
 }

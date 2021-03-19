@@ -4,17 +4,28 @@ import { RedisClient, createClient } from 'redis';
 
 @Injectable()
 export class RedisClientService {
-  private readonly redisClient: RedisClient;
+  private readonly tokenClient: RedisClient;
+  private readonly socketClient: RedisClient;
 
   constructor() {
-    this.redisClient = createClient({
+    this.tokenClient = createClient({
       host: REDIS.HOST,
       port: REDIS.PORT,
-      db: REDIS.DB,
+      db: 0,
+    });
+
+    this.socketClient = createClient({
+      host: REDIS.HOST,
+      port: REDIS.PORT,
+      db: 1,
     });
   }
 
-  set(key: string, value: string) {
-    this.redisClient.set(key, value);
+  setToken(id: string, token: string) {
+    this.tokenClient.set(id, token);
+  }
+
+  setSocket(id: string, socketId: string) {
+    this.socketClient.set(id, socketId);
   }
 }

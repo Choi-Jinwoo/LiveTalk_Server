@@ -33,7 +33,7 @@ export class UserService {
       next: async (user) => {
         const { id, dodamToken } = user;
 
-        this.redisClientService.set(id, dodamToken);
+        this.redisClientService.setToken(id, dodamToken);
       },
     })
   }

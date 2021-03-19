@@ -9,6 +9,8 @@ import { TokenModule } from 'token/token.module';
 import { UserModule } from 'user/user.module';
 import { AuditorRepository } from 'auditor/auditor.repository';
 import { UserRepository } from 'user/user.repository';
+import { LectureGateway } from 'lecture/lecture.gateway';
+import { RedisClientModule } from 'redis-client/redis-client.module';
 
 @Module({
   imports: [
@@ -18,8 +20,9 @@ import { UserRepository } from 'user/user.repository';
       UserRepository
     ]),
     TokenModule,
+    RedisClientModule,
   ],
-  providers: [LectureService],
+  providers: [LectureService, LectureGateway],
   controllers: [LectureController],
 })
 export class LectureModule {

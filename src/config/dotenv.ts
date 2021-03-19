@@ -25,7 +25,6 @@ export const MYSQL = {
 export const REDIS = {
   HOST: getValue('REDIS_HOST'),
   PORT: Number(getValue('REDIS_PORT')),
-  DB: getValue('REDIS_DB'),
 }
 
 export const JWT = {
