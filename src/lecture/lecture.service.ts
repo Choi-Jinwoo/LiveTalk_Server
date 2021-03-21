@@ -58,6 +58,6 @@ export class LectureService {
       await this.auditorRepository.save(auditor);
     }
 
-    // TODO: Socket 작업
+    this.lectureGateway.join(joinUser, lecture);
   }
 }
