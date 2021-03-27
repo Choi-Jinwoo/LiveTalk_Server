@@ -3,6 +3,7 @@ export class ErrorCode {
   static INVALID_INPUT = new ErrorCode('C002', '옳지 않은 입력 값');
 
   static DUPLICATE_SOCKET_CONNECT = new ErrorCode('S001', '중복된 회원의 접속');
+  static DISCONNECTED_SOCKET = new ErrorCode('S002', '연결이 종료된 소켓');
 
   static INVALID_TOKEN = new ErrorCode('T001', '옳지 않은 토큰');
   static TOKEN_EXPIRED = new ErrorCode('T002', '토큰 만료');

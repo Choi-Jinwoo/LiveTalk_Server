@@ -58,6 +58,6 @@ export class LectureService {
       await this.auditorRepository.save(auditor);
     }
 
-    this.lectureGateway.join(joinUser, lecture);
+    await this.lectureGateway.join(joinUser, lecture);
   }
 }

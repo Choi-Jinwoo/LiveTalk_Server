@@ -6,9 +6,7 @@ import { RedisClient, createClient } from 'redis';
 @Injectable()
 export class RedisClientService {
   private readonly tokenClient: RedisClient;
-  private readonly socketClient: RedisClient;
-
-  readonly getSocket: Function;
+  readonly socketClient: RedisClient;
 
   constructor() {
     this.tokenClient = createClient({
@@ -22,8 +20,6 @@ export class RedisClientService {
       port: REDIS.PORT,
       db: 1,
     });
-
-    this.getSocket = promisify(this.socketClient.hmget).bind(this.socketClient);
   }
 
   initSocket(cb: Function) {
@@ -32,15 +28,22 @@ export class RedisClientService {
     });
   }
 
-  setToken(id: string, token: string) {
-    this.tokenClient.set(id, token);
+  async setToken(id: string, token: string) {
+    const setAsync = promisify(this.tokenClient.set).bind(this.tokenClient);
+
+    await setAsync(id, token)
   }
 
-  setSocket(id: string, socketId: string, clientIndex: number) {
-    this.socketClient.hmset(id, {
-      socketId,
-      clientIndex,
-    });
+  async getSocket(id: string): Promise<string | null> {
+    const getAsync = promisify(this.socketClient.get).bind(this.socketClient);
+
+    return getAsync(id);
+  }
+
+  async setSocket(id: string, socketId: string) {
+    const setAsync = promisify(this.socketClient.set).bind(this.socketClient);
+
+    await setAsync(id, socketId);
   }
 
   removeSocket(id: string) {

@@ -1,12 +1,11 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
+import { OnGatewayConnection, OnGatewayDisconnect, WebSocketGateway, WebSocketServer, WsException } from '@nestjs/websockets';
 import { Lecture } from 'entities/lecture.entity';
 import { User } from 'entities/user.entity';
 import { AuthFailedError } from 'errors/auth-failed';
 import { DataNotFoundError } from 'errors/data-not-found';
 import { DuplicateError } from 'errors/duplicate.error';
 import { ErrorCode } from 'errors/error-code.enum';
-import { join } from 'lodash';
 import { SocketErrorResponse } from 'models/socket/socket-error.response';
 import { RedisClientService } from 'redis-client/redis-client.service';
 import { Server } from 'socket.io';
@@ -20,7 +19,7 @@ export class LectureGateway implements OnGatewayConnection, OnGatewayDisconnect 
   @WebSocketServer()
   readonly server!: Server;
 
-  private clients: Socket[] = [];
+  private clients: { [id: string]: Socket } = {};
 
   constructor(
     @InjectRepository(User)
@@ -40,18 +39,15 @@ export class LectureGateway implements OnGatewayConnection, OnGatewayDisconnect 
       const { id } = this.tokenService.verifyToken(token);
 
       const socketId = await this.redisClientService.getSocket(id);
+
       if (socketId !== null) {
         throw new DuplicateError(ErrorCode.DUPLICATE_SOCKET_CONNECT);
       }
 
-      const user = await this.userRepository.findOne(id);
-      if (user === undefined) {
-        throw new AuthFailedError(ErrorCode.INVALID_TOKEN);
-      }
-
-      this.redisClientService.setSocket(id, client.id, this.clients.length);
-      this.clients.push(client);
+      this.redisClientService.setSocket(id, client.id);
+      this.clients[client.id] = client;
     } catch (err) {
+      // TODO: 오류 처리
       console.log(err);
 
       switch (err.constructor) {
@@ -74,15 +70,20 @@ export class LectureGateway implements OnGatewayConnection, OnGatewayDisconnect 
     }
   }
 
+  // @UseFilters(new WsExceptionFilter())
   async join(user: User, lecture: Lecture) {
     const { id: userId } = user;
     const { id: lectureId } = lecture;
 
-    const socketData = await this.redisClientService.getSocket(userId);
-    const { clientIndex } = socketData;
+    const socketId = await this.redisClientService.getSocket(userId);
+    if (socketId === null) {
+      throw new DataNotFoundError(ErrorCode.DISCONNECTED_SOCKET);
+    }
 
-    this.clients[clientIndex].join(this.composeRoomName(lectureId));
+    this.clients[socketId].join(this.composeRoomName(lectureId));
     this.server.to(this.composeRoomName(lectureId)).emit('event', 'hi');
+
+    throw new WsException('hi');
   }
 
   async handleDisconnect(client: Socket) {
