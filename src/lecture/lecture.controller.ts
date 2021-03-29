@@ -1,6 +1,7 @@
 import { Body, Controller, Post, Request } from '@nestjs/common';
 import { Request as RequestType } from 'express';
 import { BaseResponse } from 'models/http/base.response';
+import { CloseLectureDto } from './dto/close-lecture.dto';
 import { CreateLectureDto } from './dto/create-lecture.dto';
 import { JoinLectureDto } from './dto/join-lecture.dto';
 import { LectureService } from './lecture.service';
@@ -28,5 +29,13 @@ export class LectureController {
     await this.lectureService.join(user, joinLectureDto);
 
     return BaseResponse.object('강의 참여 성공');
+  }
+
+  @Post('close')
+  async close(
+    @Body() closeLectureDto: CloseLectureDto): Promise<BaseResponse> {
+    await this.lectureService.close(closeLectureDto);
+
+    return BaseResponse.object('강의 종료 성공');
   }
 }

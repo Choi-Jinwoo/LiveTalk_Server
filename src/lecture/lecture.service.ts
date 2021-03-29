@@ -12,6 +12,7 @@ import { ExpiredError } from 'errors/expired.error';
 import { PermissionDenied } from 'errors/permission-denied';
 import { LectureGateway } from 'lecture/lecture.gateway';
 import { CharRandom, NumberRandom } from 'util/random';
+import { CloseLectureDto } from './dto/close-lecture.dto';
 import { CreateLectureDto } from './dto/create-lecture.dto';
 import { JoinLectureDto } from './dto/join-lecture.dto';
 import { LectureRepository } from './lecture.repository';
@@ -39,7 +40,9 @@ export class LectureService {
     return createdLecture;
   }
 
-  async close(lectureId: string, adminCode: string) {
+  async close(closeLectureDto: CloseLectureDto) {
+    const { lectureId, adminCode } = closeLectureDto;
+
     const lecture = await this.lectureRepository.findOne(lectureId);
     if (lecture === undefined) {
       throw new DataNotFoundError(ErrorCode.LECTURE_NOT_FOUND);
