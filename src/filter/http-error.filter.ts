@@ -44,8 +44,6 @@ export class HttpErrorFilter implements ExceptionFilter {
           .fromErrorCode(HttpStatus.INTERNAL_SERVER_ERROR, ErrorCode.SERVER_ERROR);
     }
 
-    console.log(err);
-
     res.status(errorResponse.status).json(errorResponse);
   }
 }

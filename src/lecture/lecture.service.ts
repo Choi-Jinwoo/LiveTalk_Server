@@ -5,10 +5,8 @@ import { ADMIN_CODE_LENGTH, JOIN_CODE_LENGTH } from 'constants/lecture';
 import { Auditor } from 'entities/auditor.entity';
 import { Lecture } from 'entities/lecture.entity';
 import { User } from 'entities/user.entity';
-import { DataConflictError } from 'errors/data-conflict';
 import { DataNotFoundError } from 'errors/data-not-found';
 import { ErrorCode } from 'errors/error-code.enum';
-import { ExpiredError } from 'errors/expired.error';
 import { PermissionDenied } from 'errors/permission-denied';
 import { LectureGateway } from 'lecture/lecture.gateway';
 import { CharRandom, NumberRandom } from 'util/random';
@@ -68,6 +66,7 @@ export class LectureService {
     if (lecture === undefined) {
       throw new DataNotFoundError(ErrorCode.LECTURE_NOT_FOUND);
     }
+    await this.lectureGateway.join(joinUser, lecture);
 
     if (lecture.isClosed) {
       throw new BadRequestException(ErrorCode.LECTURE_CLOSED);

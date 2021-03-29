@@ -4,17 +4,14 @@ import { OnGatewayConnection, OnGatewayDisconnect, WebSocketGateway, WebSocketSe
 import { Lecture } from 'entities/lecture.entity';
 import { User } from 'entities/user.entity';
 import { AuthFailedError } from 'errors/auth-failed';
-import { DataNotFoundError } from 'errors/data-not-found';
 import { DuplicateError } from 'errors/duplicate.error';
 import { ErrorCode } from 'errors/error-code.enum';
-import { SocketErrorFilter } from 'filter/socket-error.filter';
 import { SocketBaseResponse } from 'models/socket/socket-base.response';
 import { SocketErrorResponse } from 'models/socket/socket-error.response';
 import { RedisClientService } from 'redis-client/redis-client.service';
 import { Server } from 'socket.io';
 import { Socket } from 'socket.io';
 import { TokenService } from 'token/token.service';
-import { UserRepository } from 'user/user.repository';
 import { LectureEvents } from './lecture.event';
 
 @WebSocketGateway({ namespace: 'lecture' })
@@ -26,7 +23,6 @@ export class LectureGateway implements OnGatewayConnection, OnGatewayDisconnect 
 
   constructor(
     @InjectRepository(User)
-    private readonly userRepository: UserRepository,
     private readonly tokenService: TokenService,
     private readonly redisClientService: RedisClientService,
   ) { }
@@ -44,7 +40,7 @@ export class LectureGateway implements OnGatewayConnection, OnGatewayDisconnect 
       const socketId = await this.redisClientService.getSocket(id);
 
       if (socketId !== null) {
-        throw new DuplicateError(ErrorCode.DUPLICATE_SOCKET_CONNECT);
+        return;
       }
 
       this.redisClientService.setSocket(id, client.id);
@@ -70,7 +66,6 @@ export class LectureGateway implements OnGatewayConnection, OnGatewayDisconnect 
     }
   }
 
-  @UseFilters(new SocketErrorFilter())
   async close(lecture: Lecture) {
     this.server
       .to(this.composeRoomName(lecture.id))
@@ -79,15 +74,13 @@ export class LectureGateway implements OnGatewayConnection, OnGatewayDisconnect 
       }));
   }
 
-  @UseFilters(new SocketErrorFilter())
   async join(user: User, lecture: Lecture) {
-
     const { id: userId } = user;
     const { id: lectureId } = lecture;
 
     const socketId = await this.redisClientService.getSocket(userId);
     if (socketId === null) {
-      throw new DataNotFoundError(ErrorCode.DISCONNECTED_SOCKET);
+      return;
     }
 
     this.clients[socketId].join(this.composeRoomName(lectureId));
