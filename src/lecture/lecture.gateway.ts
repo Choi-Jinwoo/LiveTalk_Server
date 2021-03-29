@@ -50,9 +50,6 @@ export class LectureGateway implements OnGatewayConnection, OnGatewayDisconnect 
       this.redisClientService.setSocket(id, client.id);
       this.clients[client.id] = client;
     } catch (err) {
-      // TODO: 오류 처리
-      console.log(err);
-
       switch (err.constructor) {
         case AuthFailedError:
           client.emit(LectureEvents.CONNECT_ERROR,
@@ -71,6 +68,15 @@ export class LectureGateway implements OnGatewayConnection, OnGatewayDisconnect 
 
       client.disconnect();
     }
+  }
+
+  @UseFilters(new SocketErrorFilter())
+  async close(lecture: Lecture) {
+    this.server
+      .to(this.composeRoomName(lecture.id))
+      .emit(LectureEvents.LECTURE_CLOSED, SocketBaseResponse.object('강의 종료됨', {
+        lectureId: lecture.id,
+      }));
   }
 
   @UseFilters(new SocketErrorFilter())

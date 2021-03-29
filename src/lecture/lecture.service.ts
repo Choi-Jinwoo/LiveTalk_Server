@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AuditorRepository } from 'auditor/auditor.repository';
 import { ADMIN_CODE_LENGTH, JOIN_CODE_LENGTH } from 'constants/lecture';
@@ -9,6 +9,7 @@ import { DataConflictError } from 'errors/data-conflict';
 import { DataNotFoundError } from 'errors/data-not-found';
 import { ErrorCode } from 'errors/error-code.enum';
 import { ExpiredError } from 'errors/expired.error';
+import { PermissionDenied } from 'errors/permission-denied';
 import { LectureGateway } from 'lecture/lecture.gateway';
 import { CharRandom, NumberRandom } from 'util/random';
 import { CreateLectureDto } from './dto/create-lecture.dto';
@@ -38,6 +39,26 @@ export class LectureService {
     return createdLecture;
   }
 
+  async close(lectureId: string, adminCode: string) {
+    const lecture = await this.lectureRepository.findOne(lectureId);
+    if (lecture === undefined) {
+      throw new DataNotFoundError(ErrorCode.LECTURE_NOT_FOUND);
+    }
+
+    if (lecture.isClosed) {
+      throw new BadRequestException(ErrorCode.LECTURE_CLOSED);
+    }
+
+    if (lecture.adminCode !== adminCode) {
+      throw new PermissionDenied(ErrorCode.NOT_LECTURE_ADMIN);
+    }
+
+    lecture.isClosed = true;
+    await this.lectureRepository.save(lecture);
+
+    this.lectureGateway.close(lecture);
+  }
+
   async join(joinUser: User, joinLectureDto: JoinLectureDto) {
     const { joinCode } = joinLectureDto;
     const lecture = await this.lectureRepository.findByJoinCode(joinCode);
@@ -46,7 +67,7 @@ export class LectureService {
     }
 
     if (lecture.isClosed) {
-      throw new ExpiredError(ErrorCode.LECTURE_CLOSED);
+      throw new BadRequestException(ErrorCode.LECTURE_CLOSED);
     }
 
     const duplicateAuditor = await this.auditorRepository.findByLectureAndUser(lecture.id, joinUser.id);
