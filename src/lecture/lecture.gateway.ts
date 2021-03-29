@@ -1,3 +1,4 @@
+import { UseFilters } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { OnGatewayConnection, OnGatewayDisconnect, WebSocketGateway, WebSocketServer, WsException } from '@nestjs/websockets';
 import { Lecture } from 'entities/lecture.entity';
@@ -6,6 +7,8 @@ import { AuthFailedError } from 'errors/auth-failed';
 import { DataNotFoundError } from 'errors/data-not-found';
 import { DuplicateError } from 'errors/duplicate.error';
 import { ErrorCode } from 'errors/error-code.enum';
+import { SocketErrorFilter } from 'filter/socket-error.filter';
+import { SocketBaseResponse } from 'models/socket/socket-base.response';
 import { SocketErrorResponse } from 'models/socket/socket-error.response';
 import { RedisClientService } from 'redis-client/redis-client.service';
 import { Server } from 'socket.io';
@@ -70,8 +73,9 @@ export class LectureGateway implements OnGatewayConnection, OnGatewayDisconnect 
     }
   }
 
-  // @UseFilters(new WsExceptionFilter())
+  @UseFilters(new SocketErrorFilter())
   async join(user: User, lecture: Lecture) {
+
     const { id: userId } = user;
     const { id: lectureId } = lecture;
 
@@ -81,9 +85,11 @@ export class LectureGateway implements OnGatewayConnection, OnGatewayDisconnect 
     }
 
     this.clients[socketId].join(this.composeRoomName(lectureId));
-    this.server.to(this.composeRoomName(lectureId)).emit('event', 'hi');
-
-    throw new WsException('hi');
+    this.server
+      .to(this.composeRoomName(lectureId))
+      .emit(LectureEvents.USER_JOINED, SocketBaseResponse.object('타회원의 강의 접속', {
+        userId,
+      }));
   }
 
   async handleDisconnect(client: Socket) {
