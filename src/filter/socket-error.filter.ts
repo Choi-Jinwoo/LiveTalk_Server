@@ -1,11 +1,11 @@
 import { ArgumentsHost, Catch } from '@nestjs/common';
+import { BaseExceptionFilter } from '@nestjs/core';
 import { BaseWsExceptionFilter } from '@nestjs/websockets';
 
 @Catch()
-export class SocketErrorFilter extends BaseWsExceptionFilter {
+export class SocketErrorFilter extends BaseExceptionFilter {
   catch(exception: unknown, host: ArgumentsHost) {
-    console.log('pass');
-
-    super.catch(exception, host);
+    // TODO: 로그 추가
+    console.log(exception);
   }
 }
