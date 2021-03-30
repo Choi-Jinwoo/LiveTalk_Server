@@ -27,8 +27,8 @@ export class Inquiry {
   })
   user!: User;
 
-  @Column({
-    name: 'inquiry',
+  @Column('text', {
+    name: 'content',
   })
   content!: string;
 
