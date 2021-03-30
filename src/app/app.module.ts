@@ -4,6 +4,7 @@ import { AuditorModule } from 'auditor/auditor.module';
 import { AuthModule } from 'auth/auth.module';
 import { DatabaseTypes } from 'database/database.enum';
 import { DatabaseFactory } from 'database/database.factory';
+import { InquiryModule } from 'inquiry/inquiry.module';
 import { LectureModule } from 'lecture/lecture.module';
 import { TokenModule } from 'token/token.module';
 import { UserModule } from 'user/user.module';
@@ -18,6 +19,7 @@ import { UserModule } from 'user/user.module';
     TokenModule,
     LectureModule,
     AuditorModule,
+    InquiryModule,
   ],
 })
 export class AppModule { }
