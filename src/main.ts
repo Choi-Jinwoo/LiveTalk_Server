@@ -4,16 +4,12 @@ import { PORT } from 'config/dotenv';
 import { ValidationPipe } from '@nestjs/common';
 import { HttpErrorFilter } from 'filters/http-error.filter';
 import { getFromContainer } from 'typeorm';
-import { RedisClientService } from 'redis-client/redis-client.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new HttpErrorFilter());
 
-  const redisClientService = getFromContainer(RedisClientService);
-  redisClientService.initSocket(async () => {
-    await app.listen(PORT);
-  });
+  await app.listen(PORT);
 }
 bootstrap();

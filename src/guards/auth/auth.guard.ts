@@ -5,7 +5,6 @@ import { AuthFailedError } from 'errors/auth-failed.error';
 import { ErrorCode } from 'errors/error-code.enum';
 import { ExpiredError } from 'errors/expired.error';
 import { TokenExpiredError } from 'jsonwebtoken';
-import { RedisClientService } from 'redis-client/redis-client.service';
 import { TokenService } from 'token/token.service';
 import { UserRepository } from 'user/user.repository';
 

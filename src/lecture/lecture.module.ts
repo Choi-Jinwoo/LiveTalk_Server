@@ -7,7 +7,6 @@ import { TokenModule } from 'token/token.module';
 import { AuditorRepository } from 'auditor/auditor.repository';
 import { UserRepository } from 'user/user.repository';
 import { LectureGateway } from 'lecture/lecture.gateway';
-import { RedisClientModule } from 'redis-client/redis-client.module';
 
 @Module({
   imports: [
@@ -17,7 +16,6 @@ import { RedisClientModule } from 'redis-client/redis-client.module';
       UserRepository
     ]),
     TokenModule,
-    RedisClientModule,
   ],
   providers: [LectureService, LectureGateway],
   controllers: [LectureController],

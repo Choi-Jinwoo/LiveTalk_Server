@@ -8,7 +8,6 @@ import { DuplicateError } from 'errors/duplicate.error';
 import { ErrorCode } from 'errors/error-code.enum';
 import { SocketBaseResponse } from 'models/socket/socket-base.response';
 import { SocketErrorResponse } from 'models/socket/socket-error.response';
-import { RedisClientService } from 'redis-client/redis-client.service';
 import { Server } from 'socket.io';
 import { Socket } from 'socket.io';
 import { TokenService } from 'token/token.service';
@@ -24,7 +23,6 @@ export class LectureGateway implements OnGatewayConnection, OnGatewayDisconnect 
   constructor(
     @InjectRepository(User)
     private readonly tokenService: TokenService,
-    private readonly redisClientService: RedisClientService,
   ) { }
 
   private composeRoomName(id: string): string {
@@ -37,13 +35,13 @@ export class LectureGateway implements OnGatewayConnection, OnGatewayDisconnect 
     try {
       const { id } = this.tokenService.verifyToken(token);
 
-      const socketId = await this.redisClientService.getSocket(id);
+      // const socketId = await this.redisClientService.getSocket(id);
 
-      if (socketId !== null) {
-        return;
-      }
+      // if (socketId !== null) {
+      //   return;
+      // }
 
-      this.redisClientService.setSocket(id, client.id);
+      // this.redisClientService.setSocket(id, client.id);
       this.clients[client.id] = client;
     } catch (err) {
       switch (err.constructor) {

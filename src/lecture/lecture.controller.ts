@@ -5,12 +5,14 @@ import { BaseResponse } from 'models/http/base.response';
 import { CloseLectureDto } from './dto/close-lecture.dto';
 import { CreateLectureDto } from './dto/create-lecture.dto';
 import { JoinLectureDto } from './dto/join-lecture.dto';
+import { LectureGateway } from './lecture.gateway';
 import { LectureService } from './lecture.service';
 
 @Controller('lecture')
 export class LectureController {
   constructor(
     private readonly lectureService: LectureService,
+    private readonly lectureGateway: LectureGateway,
   ) { }
 
   @Post()

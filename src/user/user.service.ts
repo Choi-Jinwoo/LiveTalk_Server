@@ -6,7 +6,7 @@ import { DodamThirdParty } from 'third-party/dodam.third-party';
 import { TokenService } from 'token/token.service';
 import { UserRepository } from './user.repository';
 import { Subject } from 'rxjs';
-import { RedisClientService } from 'redis-client/redis-client.service';
+import { TokenRedis } from 'token/token.redis';
 
 @Injectable()
 export class UserService {
@@ -17,7 +17,7 @@ export class UserService {
     private readonly userRepository: UserRepository,
     private readonly dodamThirdParty: DodamThirdParty,
     private readonly tokenService: TokenService,
-    private readonly redisClientService: RedisClientService,
+    private readonly tokenRedis: TokenRedis,
   ) {
     this.subscribeUserSave();
   }
@@ -33,7 +33,7 @@ export class UserService {
       next: async (user) => {
         const { id, dodamToken } = user;
 
-        await this.redisClientService.setToken(id, dodamToken);
+        await this.tokenRedis.set(id, dodamToken);
       },
     })
   }
