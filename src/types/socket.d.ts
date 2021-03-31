@@ -1,7 +1,7 @@
 import { TokenPayloadType } from 'token/token.service';
 
-declare module 'express' {
-  export interface Request {
+declare module 'socket.io' {
+  export interface Socket {
     decoded: TokenPayloadType,
   }
 }
