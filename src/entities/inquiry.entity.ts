@@ -32,6 +32,11 @@ export class Inquiry {
   })
   content!: string;
 
+  @Column({
+    name: 'is_anonymity'
+  })
+  isAnonymity!: boolean;
+
   @CreateDateColumn({
     name: 'created_at',
   })
