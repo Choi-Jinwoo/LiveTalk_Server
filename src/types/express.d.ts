@@ -1,7 +1,7 @@
-import { TokenPayloadType } from 'token/token.service';
+import { User } from 'entities/user.entity';
 
 declare module 'express' {
   export interface Request {
-    decoded: TokenPayloadType,
+    user: User,
   }
 }
