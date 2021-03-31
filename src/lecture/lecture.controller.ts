@@ -1,6 +1,8 @@
-import { Body, Controller, Post, Request } from '@nestjs/common';
+import { Body, Controller, Post, Request, UseGuards } from '@nestjs/common';
+import { SubscribeMessage } from '@nestjs/websockets';
 import { ReqUser } from 'decorators/req-user.decorator';
 import { User } from 'entities/user.entity';
+import { HttpAuthGuard } from 'guards/auth/http-auth.guard';
 import { BaseResponse } from 'models/http/base.response';
 import { CloseLectureDto } from './dto/close-lecture.dto';
 import { CreateLectureDto } from './dto/create-lecture.dto';
@@ -25,6 +27,7 @@ export class LectureController {
   }
 
   @Post('join')
+  @UseGuards(HttpAuthGuard)
   async join(
     @ReqUser() user: User,
     @Body() joinLectureDto: JoinLectureDto): Promise<BaseResponse> {
@@ -36,7 +39,8 @@ export class LectureController {
   @Post('close')
   async close(
     @Body() closeLectureDto: CloseLectureDto): Promise<BaseResponse> {
-    await this.lectureService.close(closeLectureDto);
+    const lecture = await this.lectureService.close(closeLectureDto);
+    this.lectureGateway.emitClose(lecture);
 
     return BaseResponse.object('강의 종료 성공');
   }

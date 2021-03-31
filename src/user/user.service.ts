@@ -7,6 +7,8 @@ import { TokenService } from 'token/token.service';
 import { UserRepository } from './user.repository';
 import { Subject } from 'rxjs';
 import { TokenRedis } from 'token/token.redis';
+import { AuthFailedError } from 'errors/auth-failed.error';
+import { ErrorCode } from 'errors/error-code.enum';
 
 @Injectable()
 export class UserService {
@@ -50,8 +52,12 @@ export class UserService {
     }
 
     // 토큰 갱신
-    const dodamToken = await this.dodamThirdParty.login(id, pw);
-    user.dodamToken = dodamToken;
+    try {
+      const dodamToken = await this.dodamThirdParty.login(id, pw);
+      user.dodamToken = dodamToken;
+    } catch (err) {
+      throw new AuthFailedError(ErrorCode.LOGIN_FAILED);
+    }
 
     await this.user$.next(user);
 

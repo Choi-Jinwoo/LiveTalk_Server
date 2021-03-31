@@ -4,6 +4,7 @@ import { DataConflictError } from 'errors/data-conflict.error';
 import { DataNotFoundError } from 'errors/data-not-found.error';
 import { ErrorCode } from 'errors/error-code.enum';
 import { ExpiredError } from 'errors/expired.error';
+import { InvalidDataError } from 'errors/invalid-data.error';
 import { ErrorResponse } from 'models/http/error.response';
 
 @Catch()
@@ -14,9 +15,15 @@ export class HttpErrorFilter implements ExceptionFilter {
 
     let errorResponse = null;
     switch (err.constructor) {
+
       case BadRequestException:
         errorResponse = ErrorResponse
           .fromErrorCode(HttpStatus.BAD_REQUEST, ErrorCode.INVALID_INPUT);
+        break;
+
+      case InvalidDataError:
+        errorResponse = ErrorResponse
+          .fromErrorCode(HttpStatus.BAD_REQUEST, err.errorCode);
         break;
 
       case AuthFailedError:
@@ -44,6 +51,7 @@ export class HttpErrorFilter implements ExceptionFilter {
           .fromErrorCode(HttpStatus.INTERNAL_SERVER_ERROR, ErrorCode.SERVER_ERROR);
     }
 
+    console.log(err);
     res.status(errorResponse.status).json(errorResponse);
   }
 }

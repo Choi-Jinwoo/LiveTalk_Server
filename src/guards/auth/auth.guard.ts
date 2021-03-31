@@ -1,7 +1,8 @@
-import { CanActivate, ExecutionContext, NotFoundException } from '@nestjs/common';
+import { CanActivate, ExecutionContext } from '@nestjs/common';
 import { HttpArgumentsHost, WsArgumentsHost } from '@nestjs/common/interfaces';
 import { User } from 'entities/user.entity';
 import { AuthFailedError } from 'errors/auth-failed.error';
+import { DataNotFoundError } from 'errors/data-not-found.error';
 import { ErrorCode } from 'errors/error-code.enum';
 import { ExpiredError } from 'errors/expired.error';
 import { TokenExpiredError } from 'jsonwebtoken';
@@ -21,7 +22,7 @@ export abstract class AuthGuard implements CanActivate {
   async findUser(id: string): Promise<User> {
     const user = await this.userRepository.findOne(id);
     if (user === undefined) {
-      throw new NotFoundException(ErrorCode.USER_NOT_FOUND);
+      throw new DataNotFoundError(ErrorCode.USER_NOT_FOUND);
     }
 
     return user;
@@ -29,6 +30,7 @@ export abstract class AuthGuard implements CanActivate {
 
   decodeToken(token: string) {
     try {
+      console.log(this.tokenService);
       const decoded = this.tokenService.verifyToken(token);
 
       return decoded;

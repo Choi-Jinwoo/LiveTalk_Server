@@ -3,7 +3,6 @@ import { AppModule } from './app/app.module';
 import { PORT } from 'config/dotenv';
 import { ValidationPipe } from '@nestjs/common';
 import { HttpErrorFilter } from 'filters/http-error.filter';
-import { getFromContainer } from 'typeorm';
 import { RedisIoAdapter } from 'adapters/redis.adapter';
 
 async function bootstrap() {

@@ -17,6 +17,8 @@ export class ErrorCode {
 
   static DODAM_TOKEN_EXPIRED = new ErrorCode('D001', '도담도담 토큰 만료');
 
+  static LOGIN_FAILED = new ErrorCode('A001', '로그인 실패');
+
   constructor(
     readonly code: string,
     readonly message: string,

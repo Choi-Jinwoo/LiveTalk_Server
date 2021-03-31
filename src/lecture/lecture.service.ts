@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AuditorRepository } from 'auditor/auditor.repository';
 import { ADMIN_CODE_LENGTH, JOIN_CODE_LENGTH } from 'constants/lecture';
@@ -7,6 +7,7 @@ import { Lecture } from 'entities/lecture.entity';
 import { User } from 'entities/user.entity';
 import { DataNotFoundError } from 'errors/data-not-found.error';
 import { ErrorCode } from 'errors/error-code.enum';
+import { InvalidDataError } from 'errors/invalid-data.error';
 import { PermissionDenied } from 'errors/permission-denied.error';
 import { CharRandom, NumberRandom } from 'utils/random/random.util';
 import { CloseLectureDto } from './dto/close-lecture.dto';
@@ -35,7 +36,7 @@ export class LectureService {
     return createdLecture;
   }
 
-  async close(closeLectureDto: CloseLectureDto) {
+  async close(closeLectureDto: CloseLectureDto): Promise<Lecture> {
     const { lectureId, adminCode } = closeLectureDto;
 
     const lecture = await this.lectureRepository.findOne(lectureId);
@@ -44,7 +45,7 @@ export class LectureService {
     }
 
     if (lecture.isClosed) {
-      throw new BadRequestException(ErrorCode.LECTURE_CLOSED);
+      throw new InvalidDataError(ErrorCode.LECTURE_CLOSED);
     }
 
     if (lecture.adminCode !== adminCode) {
@@ -52,10 +53,10 @@ export class LectureService {
     }
 
     lecture.isClosed = true;
-    await this.lectureRepository.save(lecture);
+    return await this.lectureRepository.save(lecture);
   }
 
-  async join(joinUser: User, joinLectureDto: JoinLectureDto) {
+  async join(joinUser: User, joinLectureDto: JoinLectureDto): Promise<Lecture> {
     const { joinCode } = joinLectureDto;
     const lecture = await this.lectureRepository.findByJoinCode(joinCode);
     if (lecture === undefined) {
@@ -63,7 +64,7 @@ export class LectureService {
     }
 
     if (lecture.isClosed) {
-      throw new BadRequestException(ErrorCode.LECTURE_CLOSED);
+      throw new InvalidDataError(ErrorCode.LECTURE_CLOSED);
     }
 
     const duplicateAuditor = await this.auditorRepository.findByLectureAndUser(lecture.id, joinUser.id);
@@ -72,7 +73,9 @@ export class LectureService {
       auditor.lecture = lecture;
       auditor.user = joinUser;
 
-      await this.auditorRepository.save(auditor);
+      this.auditorRepository.save(auditor);
     }
+
+    return lecture;
   }
 }
