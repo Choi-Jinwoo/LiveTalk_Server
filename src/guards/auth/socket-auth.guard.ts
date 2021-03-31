@@ -5,7 +5,7 @@ import { ErrorCode } from 'errors/error-code.enum';
 import { InvalidDataError } from 'errors/invalid-data.error';
 import { Observable } from 'rxjs';
 import { Socket } from 'socket.io';
-import { isString } from 'util/type/string.util';
+import { isString } from 'utils/type/string.util';
 import { AuthGuard } from './auth.guard';
 
 export class SocketAuthGuard extends AuthGuard {

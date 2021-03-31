@@ -9,7 +9,7 @@ import { DataNotFoundError } from 'errors/data-not-found.error';
 import { ErrorCode } from 'errors/error-code.enum';
 import { PermissionDenied } from 'errors/permission-denied.error';
 import { LectureGateway } from 'lecture/lecture.gateway';
-import { CharRandom, NumberRandom } from 'util/random/random.util';
+import { CharRandom, NumberRandom } from 'utils/random/random.util';
 import { CloseLectureDto } from './dto/close-lecture.dto';
 import { CreateLectureDto } from './dto/create-lecture.dto';
 import { JoinLectureDto } from './dto/join-lecture.dto';

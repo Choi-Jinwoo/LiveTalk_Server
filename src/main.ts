@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app/app.module';
 import { PORT } from 'config/dotenv';
 import { ValidationPipe } from '@nestjs/common';
-import { HttpErrorFilter } from 'filter/http-error.filter';
+import { HttpErrorFilter } from 'filters/http-error.filter';
 import { getFromContainer } from 'typeorm';
 import { RedisClientService } from 'redis-client/redis-client.service';
 

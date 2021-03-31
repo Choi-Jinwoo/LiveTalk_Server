@@ -4,11 +4,8 @@ import { TOKEN_KEY } from 'constants/token';
 import { Request } from 'express';
 import { Observable } from 'rxjs';
 import { AuthGuard } from './auth.guard';
-import { isString } from 'util/type/string.util';
-import { TokenExpiredError } from 'jsonwebtoken';
-import { ExpiredError } from 'errors/expired.error';
+import { isString } from 'utils/type/string.util';
 import { ErrorCode } from 'errors/error-code.enum';
-import { AuthFailedError } from 'errors/auth-failed.error';
 import { InvalidDataError } from 'errors/invalid-data.error';
 
 export class HttpAuthGuard extends AuthGuard {
@@ -29,3 +26,4 @@ export class HttpAuthGuard extends AuthGuard {
 
     return true;
   }
+}
