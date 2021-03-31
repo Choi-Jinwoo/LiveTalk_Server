@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { OnGatewayConnection, OnGatewayDisconnect, WebSocketGateway, WebSocketServer, WsException } from '@nestjs/websockets';
 import { Lecture } from 'entities/lecture.entity';
 import { User } from 'entities/user.entity';
-import { AuthFailedError } from 'errors/auth-failed';
+import { AuthFailedError } from 'errors/auth-failed.error';
 import { DuplicateError } from 'errors/duplicate.error';
 import { ErrorCode } from 'errors/error-code.enum';
 import { SocketBaseResponse } from 'models/socket/socket-base.response';

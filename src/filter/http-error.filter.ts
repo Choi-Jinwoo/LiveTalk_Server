@@ -1,7 +1,7 @@
 import { ArgumentsHost, BadRequestException, Catch, ExceptionFilter, HttpStatus } from '@nestjs/common';
-import { AuthFailedError } from 'errors/auth-failed';
-import { DataConflictError } from 'errors/data-conflict';
-import { DataNotFoundError } from 'errors/data-not-found';
+import { AuthFailedError } from 'errors/auth-failed.error';
+import { DataConflictError } from 'errors/data-conflict.error';
+import { DataNotFoundError } from 'errors/data-not-found.error';
 import { ErrorCode } from 'errors/error-code.enum';
 import { ExpiredError } from 'errors/expired.error';
 import { ErrorResponse } from 'models/http/error.response';

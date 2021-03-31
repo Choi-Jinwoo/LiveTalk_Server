@@ -5,6 +5,11 @@ import { Request } from 'express';
 import { Observable } from 'rxjs';
 import { AuthGuard } from './auth.guard';
 import { isString } from 'util/type/string.util';
+import { TokenExpiredError } from 'jsonwebtoken';
+import { ExpiredError } from 'errors/expired.error';
+import { ErrorCode } from 'errors/error-code.enum';
+import { AuthFailedError } from 'errors/auth-failed.error';
+import { InvalidDataError } from 'errors/invalid-data.error';
 
 export class HttpAuthGuard extends AuthGuard {
 
@@ -16,16 +21,11 @@ export class HttpAuthGuard extends AuthGuard {
     const req = this.switchContext(context).getRequest<Request>();
     const token = req.headers[TOKEN_KEY];
     if (!isString(token)) {
-      return false;
+      throw new InvalidDataError(ErrorCode.INVALID_INPUT);
     }
 
-    try {
-      const decoded = this.decodeToken(token);
-      req.decoded = decoded;
+    const decoded = this.decodeToken(token);
+    req.decoded = decoded;
 
-      return true;
-    } catch (err) {
-      return false;
-    }
+    return true;
   }
-}

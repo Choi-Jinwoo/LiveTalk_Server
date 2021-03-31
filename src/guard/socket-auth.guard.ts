@@ -1,6 +1,8 @@
 import { ExecutionContext } from '@nestjs/common';
 import { WsArgumentsHost } from '@nestjs/common/interfaces';
 import { TOKEN_KEY } from 'constants/token';
+import { ErrorCode } from 'errors/error-code.enum';
+import { InvalidDataError } from 'errors/invalid-data.error';
 import { Observable } from 'rxjs';
 import { Socket } from 'socket.io';
 import { isString } from 'util/type/string.util';
@@ -16,7 +18,7 @@ export class SocketAuthGuard extends AuthGuard {
     const client = this.switchContext(context).getClient<Socket>();
     const token = client.handshake.query[TOKEN_KEY];
     if (!isString(token)) {
-      return false;
+      throw new InvalidDataError(ErrorCode.INVALID_INPUT);
     }
 
     try {
