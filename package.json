@@ -31,6 +31,7 @@
     "@types/lodash": "^4.14.168",
     "@types/redis": "^2.8.28",
     "@types/socket.io": "^2.1.13",
+    "@types/socket.io-redis": "^1.0.27",
     "axios": "^0.21.1",
     "class-transformer": "^0.4.0",
     "class-validator": "^0.13.1",

@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { REDIS } from 'config/dotenv';
 import { promisify } from 'util';
 import { createClient, RedisClient } from 'redis';
+import { TOKEN_DB } from 'constants/redis';
 
 @Injectable()
 export class TokenRedis {
@@ -11,7 +12,7 @@ export class TokenRedis {
     this.tokenClient = createClient({
       host: REDIS.HOST,
       port: REDIS.PORT,
-      db: 0,
+      db: TOKEN_DB,
     });
   }
 
