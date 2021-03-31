@@ -1,5 +1,6 @@
 import { Body, Controller, Post, Request } from '@nestjs/common';
-import { Request as RequestType } from 'express';
+import { ReqUser } from 'decorators/req-user.decorator';
+import { User } from 'entities/user.entity';
 import { BaseResponse } from 'models/http/base.response';
 import { CloseLectureDto } from './dto/close-lecture.dto';
 import { CreateLectureDto } from './dto/create-lecture.dto';
@@ -23,9 +24,8 @@ export class LectureController {
 
   @Post('join')
   async join(
-    @Request() req: RequestType,
+    @ReqUser() user: User,
     @Body() joinLectureDto: JoinLectureDto): Promise<BaseResponse> {
-    const { user } = req;
     await this.lectureService.join(user, joinLectureDto);
 
     return BaseResponse.object('강의 참여 성공');

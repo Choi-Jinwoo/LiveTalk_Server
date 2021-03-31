@@ -8,7 +8,6 @@ import { User } from 'entities/user.entity';
 import { DataNotFoundError } from 'errors/data-not-found.error';
 import { ErrorCode } from 'errors/error-code.enum';
 import { PermissionDenied } from 'errors/permission-denied.error';
-import { LectureGateway } from 'lecture/lecture.gateway';
 import { CharRandom, NumberRandom } from 'utils/random/random.util';
 import { CloseLectureDto } from './dto/close-lecture.dto';
 import { CreateLectureDto } from './dto/create-lecture.dto';
@@ -23,8 +22,6 @@ export class LectureService {
 
     @InjectRepository(Auditor)
     private readonly auditorRepository: AuditorRepository,
-
-    private readonly lectureGateway: LectureGateway,
   ) { }
 
   async create(createLectureDto: CreateLectureDto): Promise<Lecture> {
@@ -56,8 +53,6 @@ export class LectureService {
 
     lecture.isClosed = true;
     await this.lectureRepository.save(lecture);
-
-    this.lectureGateway.close(lecture);
   }
 
   async join(joinUser: User, joinLectureDto: JoinLectureDto) {
@@ -66,7 +61,6 @@ export class LectureService {
     if (lecture === undefined) {
       throw new DataNotFoundError(ErrorCode.LECTURE_NOT_FOUND);
     }
-    await this.lectureGateway.join(joinUser, lecture);
 
     if (lecture.isClosed) {
       throw new BadRequestException(ErrorCode.LECTURE_CLOSED);
@@ -80,7 +74,5 @@ export class LectureService {
 
       await this.auditorRepository.save(auditor);
     }
-
-    await this.lectureGateway.join(joinUser, lecture);
   }
 }

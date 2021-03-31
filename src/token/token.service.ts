@@ -3,7 +3,7 @@ import { JWT } from 'config/dotenv';
 import { User } from 'entities/user.entity';
 import * as jwt from 'jsonwebtoken';
 
-export type TokenPayloadType = {
+export type TokenDecode = {
   id: string;
 }
 
@@ -11,7 +11,7 @@ export type TokenPayloadType = {
 export class TokenService {
   createToken(user: User): string {
     const { id } = user;
-    const payload: TokenPayloadType = {
+    const payload: TokenDecode = {
       id,
     }
 
@@ -25,7 +25,7 @@ export class TokenService {
   }
 
   verifyToken(token: string) {
-    const decoded = jwt.verify(token, JWT.SECRET) as TokenPayloadType;
+    const decoded = jwt.verify(token, JWT.SECRET) as TokenDecode;
 
     return decoded;
   }
