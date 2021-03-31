@@ -2,7 +2,6 @@ import { ExecutionContext } from '@nestjs/common';
 import { HttpArgumentsHost } from '@nestjs/common/interfaces';
 import { TOKEN_KEY } from 'constants/token';
 import { Request } from 'express';
-import { Observable } from 'rxjs';
 import { AuthGuard } from './auth.guard';
 import { isString } from 'utils/type/string.util';
 import { ErrorCode } from 'errors/error-code.enum';
@@ -14,7 +13,7 @@ export class HttpAuthGuard extends AuthGuard {
     return context.switchToHttp();
   }
 
-  canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const req = this.switchContext(context).getRequest<Request>();
     const token = req.headers[TOKEN_KEY];
     if (!isString(token)) {
@@ -22,7 +21,7 @@ export class HttpAuthGuard extends AuthGuard {
     }
 
     const decoded = this.decodeToken(token);
-    req.decoded = decoded;
+    req.user = await this.findUser(decoded.id)
 
     return true;
   }
