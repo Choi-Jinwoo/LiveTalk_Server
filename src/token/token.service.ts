@@ -3,7 +3,7 @@ import { JWT } from 'config/dotenv';
 import { User } from 'entities/user.entity';
 import * as jwt from 'jsonwebtoken';
 
-type TokenPayloadType = {
+export type TokenPayloadType = {
   id: string;
 }
 
