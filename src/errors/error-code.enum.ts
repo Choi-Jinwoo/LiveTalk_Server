@@ -14,6 +14,7 @@ export class ErrorCode {
   static LECTURE_CLOSED = new ErrorCode('L002', '이미 종료된 강의');
   static ALREADY_JOINED = new ErrorCode('L003', '이미 참여한 강의');
   static NOT_LECTURE_ADMIN = new ErrorCode('L004', '강의 관리자가 아님');
+  static NOT_LECTURE_AUDITOR = new ErrorCode('L005', '강의 수강자가 아님');
 
   static DODAM_TOKEN_EXPIRED = new ErrorCode('D001', '도담도담 토큰 만료');
 

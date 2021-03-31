@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { AuditorRepository } from 'auditor/auditor.repository';
+import { AuditorService } from 'auditor/auditor.service';
 import { ADMIN_CODE_LENGTH, JOIN_CODE_LENGTH } from 'constants/lecture';
-import { Auditor } from 'entities/auditor.entity';
 import { Lecture } from 'entities/lecture.entity';
 import { User } from 'entities/user.entity';
 import { DataNotFoundError } from 'errors/data-not-found.error';
@@ -20,10 +19,12 @@ export class LectureService {
   constructor(
     @InjectRepository(Lecture)
     private readonly lectureRepository: LectureRepository,
-
-    @InjectRepository(Auditor)
-    private readonly auditorRepository: AuditorRepository,
+    private readonly auditorService: AuditorService,
   ) { }
+
+  async findOne(id: string): Promise<Lecture | undefined> {
+    return this.lectureRepository.findOne(id);
+  }
 
   async create(createLectureDto: CreateLectureDto): Promise<Lecture> {
     const lecture = this.lectureRepository.create(createLectureDto);
@@ -67,13 +68,9 @@ export class LectureService {
       throw new InvalidDataError(ErrorCode.LECTURE_CLOSED);
     }
 
-    const duplicateAuditor = await this.auditorRepository.findByLectureAndUser(lecture.id, joinUser.id);
-    if (duplicateAuditor === undefined) {
-      const auditor = new Auditor();
-      auditor.lecture = lecture;
-      auditor.user = joinUser;
-
-      this.auditorRepository.save(auditor);
+    const userIsJoined = await this.auditorService.isJoined(joinUser, lecture);
+    if (!userIsJoined) {
+      await this.auditorService.create(joinUser, lecture);
     }
 
     return lecture;

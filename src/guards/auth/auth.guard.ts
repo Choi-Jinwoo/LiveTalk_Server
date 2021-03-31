@@ -30,7 +30,6 @@ export abstract class AuthGuard implements CanActivate {
 
   decodeToken(token: string) {
     try {
-      console.log(this.tokenService);
       const decoded = this.tokenService.verifyToken(token);
 
       return decoded;
