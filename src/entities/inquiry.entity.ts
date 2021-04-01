@@ -1,10 +1,10 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryColumn, RelationId } from 'typeorm';
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, RelationId } from 'typeorm';
 import { Lecture } from './lecture.entity';
 import { User } from './user.entity';
 
 @Entity('inquiry')
 export class Inquiry {
-  @PrimaryColumn('uuid', {
+  @PrimaryGeneratedColumn('uuid', {
     name: 'id',
   })
   id!: string;
