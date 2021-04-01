@@ -6,7 +6,6 @@ import { DodamThirdParty } from 'third-party/dodam.third-party';
 import { TokenService } from 'token/token.service';
 import { UserRepository } from './user.repository';
 import { Subject } from 'rxjs';
-import { TokenRedis } from 'token/token.redis';
 import { AuthFailedError } from 'errors/auth-failed.error';
 import { ErrorCode } from 'errors/error-code.enum';
 
@@ -19,7 +18,6 @@ export class UserService {
     private readonly userRepository: UserRepository,
     private readonly dodamThirdParty: DodamThirdParty,
     private readonly tokenService: TokenService,
-    private readonly tokenRedis: TokenRedis,
   ) {
     this.subscribeUserSave();
   }
@@ -35,7 +33,7 @@ export class UserService {
       next: async (user) => {
         const { id, dodamToken } = user;
 
-        await this.tokenRedis.set(id, dodamToken);
+        await this.tokenService.save(id, dodamToken);
       },
     })
   }
