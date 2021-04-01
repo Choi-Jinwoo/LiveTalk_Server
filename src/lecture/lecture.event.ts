@@ -3,4 +3,5 @@ export enum LectureEvents {
   USER_JOINED = 'user-joined',
   LECTURE_CLOSED = 'lecture-closed',
   JOIN_LECTURE = 'join-lecture',
+  SEND_INQUIRY = 'send-inquiry',
 }

@@ -8,10 +8,10 @@ import { DataNotFoundError } from 'errors/data-not-found.error';
 import { ErrorCode } from 'errors/error-code.enum';
 import { PermissionDenied } from 'errors/permission-denied.error';
 import { SocketAuthGuard } from 'guards/auth/socket-auth.guard';
+import { CreateInquiryDto } from 'inquiry/dto/create-inquiry.dto';
 import { IHasRoomGateway } from 'interface/gateway/has-room-gateway.interface';
 import { SocketBaseResponse } from 'models/socket/socket-base.response';
 import { Server, Socket } from 'socket.io';
-import { JoinLectureDto } from './dto/join-lecture.dto';
 import { JoinSpecificLectureDto } from './dto/join-specific-lecture.dto';
 import { LectureEvents } from './lecture.event';
 import { LectureService } from './lecture.service';
@@ -28,6 +28,16 @@ export class LectureGateway implements IHasRoomGateway {
 
   composeRoomName(id: string): string {
     return `lecture-${id}`;
+  }
+
+  @SubscribeMessage(LectureEvents.SEND_INQUIRY)
+  @UsePipes(ValidationPipe)
+  @UseGuards(SocketAuthGuard)
+  async handleSendInquiry(
+    @ReqUser() user: User,
+    @MessageBody() createInquiryDto: CreateInquiryDto) {
+
+
   }
 
   @SubscribeMessage(LectureEvents.JOIN_LECTURE)

@@ -18,6 +18,7 @@ import { AuditorModule } from 'auditor/auditor.module';
     AuditorModule,
   ],
   providers: [LectureService, LectureGateway],
+  exports: [LectureService],
   controllers: [LectureController],
 })
 export class LectureModule { }
