@@ -1,7 +1,10 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuditorModule } from 'auditor/auditor.module';
 import { LectureModule } from 'lecture/lecture.module';
+import { TokenModule } from 'token/token.module';
+import { UserModule } from 'user/user.module';
+import { InquiryGateway } from './inquiry.gateway';
 import { InquiryRepository } from './inquiry.repository';
 import { InquiryService } from './inquiry.service';
 
@@ -10,10 +13,12 @@ import { InquiryService } from './inquiry.service';
     TypeOrmModule.forFeature([
       InquiryRepository,
     ]),
-    LectureModule,
+    forwardRef(() => LectureModule),
     AuditorModule,
+    TokenModule,
+    UserModule,
   ],
-  providers: [InquiryService],
-  exports: [InquiryService],
+  providers: [InquiryService, InquiryGateway],
+  exports: [InquiryService, InquiryGateway],
 })
 export class InquiryModule { }

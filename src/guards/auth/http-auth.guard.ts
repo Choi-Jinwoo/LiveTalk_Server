@@ -6,10 +6,7 @@ import { AuthGuard } from './auth.guard';
 import { isString } from 'utils/type/string.util';
 import { ErrorCode } from 'errors/error-code.enum';
 import { InvalidDataError } from 'errors/invalid-data.error';
-import { InjectRepository } from '@nestjs/typeorm';
-import { User } from 'entities/user.entity';
 import { TokenService } from 'token/token.service';
-import { UserRepository } from 'user/user.repository';
 import { UserService } from 'user/user.service';
 
 export class HttpAuthGuard extends AuthGuard {

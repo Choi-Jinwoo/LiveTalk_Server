@@ -8,19 +8,23 @@ import { DataNotFoundError } from 'errors/data-not-found.error';
 import { ErrorCode } from 'errors/error-code.enum';
 import { PermissionDenied } from 'errors/permission-denied.error';
 import { SocketAuthGuard } from 'guards/auth/socket-auth.guard';
+import { AnonymityInquiryDto } from 'inquiry/dto/anonymity-inquiry.dto';
 import { CreateInquiryDto } from 'inquiry/dto/create-inquiry.dto';
+import { InquiryService } from 'inquiry/inquiry.service';
 import { IHasRoomGateway } from 'interface/gateway/has-room-gateway.interface';
 import { SocketBaseResponse } from 'models/socket/socket-base.response';
 import { Server, Socket } from 'socket.io';
-import { JoinSpecificLectureDto } from './dto/join-specific-lecture.dto';
-import { LectureEvents } from './lecture.event';
-import { LectureService } from './lecture.service';
+import { JoinSpecificLectureDto } from '../lecture/dto/join-specific-lecture.dto';
+import { LectureEvents } from './inquiry.event';
+import { LectureService } from 'lecture/lecture.service';
 
-@WebSocketGateway({ namespace: 'lecture' })
-export class LectureGateway implements IHasRoomGateway {
+@WebSocketGateway({ namespace: 'inquiry' })
+@UsePipes(ValidationPipe)
+export class InquiryGateway implements IHasRoomGateway {
   constructor(
     private readonly auditorService: AuditorService,
     private readonly lectureService: LectureService,
+    private readonly inquiryService: InquiryService,
   ) { }
 
   @WebSocketServer()
@@ -31,17 +35,32 @@ export class LectureGateway implements IHasRoomGateway {
   }
 
   @SubscribeMessage(LectureEvents.SEND_INQUIRY)
-  @UsePipes(ValidationPipe)
   @UseGuards(SocketAuthGuard)
   async handleSendInquiry(
     @ReqUser() user: User,
     @MessageBody() createInquiryDto: CreateInquiryDto) {
 
+    const inquiry = await this.inquiryService.create(user, createInquiryDto);
 
+    const { lectureId } = inquiry;
+
+    let anonymityInquiry: AnonymityInquiryDto | null = null;
+    if (inquiry.isAnonymity === true) {
+      anonymityInquiry = new AnonymityInquiryDto();
+      anonymityInquiry.id = inquiry.id;
+      anonymityInquiry.content = inquiry.content;
+      anonymityInquiry.lectureId = inquiry.lectureId;
+      anonymityInquiry.lecture = inquiry.lecture;
+    }
+
+    this.server
+      .to(this.composeRoomName(lectureId))
+      .emit(LectureEvents.NEW_INQUIRY, SocketBaseResponse.object('새로운 질문 등록', {
+        inquiry: anonymityInquiry ?? inquiry,
+      }));
   }
 
   @SubscribeMessage(LectureEvents.JOIN_LECTURE)
-  @UsePipes(ValidationPipe)
   @UseGuards(SocketAuthGuard)
   async handleJoin(
     @ReqUser() user: User,

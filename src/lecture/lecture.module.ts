@@ -1,21 +1,20 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { LectureService } from './lecture.service';
 import { LectureController } from './lecture.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { LectureRepository } from './lecture.repository';
-import { TokenModule } from 'token/token.module';
-import { LectureGateway } from 'lecture/lecture.gateway';
 import { AuditorModule } from 'auditor/auditor.module';
+import { InquiryModule } from 'inquiry/inquiry.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       LectureRepository,
     ]),
-    TokenModule,
     AuditorModule,
+    forwardRef(() => InquiryModule),
   ],
-  providers: [LectureService, LectureGateway],
+  providers: [LectureService],
   exports: [LectureService],
   controllers: [LectureController],
 })
