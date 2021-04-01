@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { JWT } from 'config/dotenv';
 import { User } from 'entities/user.entity';
 import * as jwt from 'jsonwebtoken';
-import { StringIterator } from 'lodash';
 import { TokenRedis } from './token.redis';
 
 export type TokenDecode = {

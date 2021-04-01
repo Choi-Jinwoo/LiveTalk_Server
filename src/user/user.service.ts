@@ -38,6 +38,10 @@ export class UserService {
     })
   }
 
+  async findOne(id: string): Promise<User | undefined> {
+    return this.userRepository.findOne(id);
+  }
+
   async login(loginDto: LoginDto): Promise<string> {
     const { id, pw } = loginDto;
 

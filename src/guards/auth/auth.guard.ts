@@ -7,12 +7,12 @@ import { ErrorCode } from 'errors/error-code.enum';
 import { ExpiredError } from 'errors/expired.error';
 import { TokenExpiredError } from 'jsonwebtoken';
 import { TokenService } from 'token/token.service';
-import { UserRepository } from 'user/user.repository';
+import { UserService } from 'user/user.service';
 
 export abstract class AuthGuard implements CanActivate {
   constructor(
     private readonly tokenService: TokenService,
-    private readonly userRepository: UserRepository,
+    private readonly userService: UserService,
   ) { }
 
   abstract switchContext(context: ExecutionContext): HttpArgumentsHost | WsArgumentsHost;
@@ -20,7 +20,7 @@ export abstract class AuthGuard implements CanActivate {
   abstract canActivate(context: ExecutionContext): Promise<boolean>;
 
   async findUser(id: string): Promise<User> {
-    const user = await this.userRepository.findOne(id);
+    const user = await this.userService.findOne(id);
     if (user === undefined) {
       throw new DataNotFoundError(ErrorCode.USER_NOT_FOUND);
     }

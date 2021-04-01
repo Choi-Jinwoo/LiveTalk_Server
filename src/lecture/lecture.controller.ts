@@ -1,5 +1,5 @@
-import { Body, Controller, Post, Request, UseGuards } from '@nestjs/common';
-import { SubscribeMessage } from '@nestjs/websockets';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { AuditorService } from 'auditor/auditor.service';
 import { ReqUser } from 'decorators/req-user.decorator';
 import { User } from 'entities/user.entity';
 import { HttpAuthGuard } from 'guards/auth/http-auth.guard';
@@ -15,6 +15,7 @@ export class LectureController {
   constructor(
     private readonly lectureService: LectureService,
     private readonly lectureGateway: LectureGateway,
+    private readonly auditorService: AuditorService,
   ) { }
 
   @Post()
@@ -31,7 +32,9 @@ export class LectureController {
   async join(
     @ReqUser() user: User,
     @Body() joinLectureDto: JoinLectureDto): Promise<BaseResponse> {
-    await this.lectureService.join(user, joinLectureDto);
+    const { joinCode } = joinLectureDto;
+    const lecture = await this.lectureService.findOrFailByJoinCode(joinCode);
+    await this.auditorService.joinLecture(user, lecture);
 
     return BaseResponse.object('강의 참여 성공');
   }
