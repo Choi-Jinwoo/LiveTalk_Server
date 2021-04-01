@@ -42,8 +42,7 @@ export class InquiryGateway implements IHasRoomGateway {
 
     const inquiry = await this.inquiryService.create(user, createInquiryDto);
 
-    const { lectureId } = inquiry;
-
+    // FIXME: 빌더 패턴을 활용하여 개선 필요
     let anonymityInquiry: AnonymityInquiryDto | null = null;
     if (inquiry.isAnonymity === true) {
       anonymityInquiry = new AnonymityInquiryDto();
@@ -54,7 +53,7 @@ export class InquiryGateway implements IHasRoomGateway {
     }
 
     this.server
-      .to(this.composeRoomName(lectureId))
+      .to(this.composeRoomName(inquiry.lecture.id))
       .emit(LectureEvents.NEW_INQUIRY, SocketBaseResponse.object('새로운 질문 등록', {
         inquiry: anonymityInquiry ?? inquiry,
       }));
