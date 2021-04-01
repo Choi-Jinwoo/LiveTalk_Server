@@ -1,4 +1,4 @@
-import { ExecutionContext } from '@nestjs/common';
+import { ExecutionContext, Injectable } from '@nestjs/common';
 import { WsArgumentsHost } from '@nestjs/common/interfaces';
 import { TOKEN_KEY } from 'constants/token';
 import { ErrorCode } from 'errors/error-code.enum';
@@ -9,6 +9,7 @@ import { UserService } from 'user/user.service';
 import { isString } from 'utils/type/string.util';
 import { AuthGuard } from './auth.guard';
 
+@Injectable()
 export class SocketAuthGuard extends AuthGuard {
   constructor(
     tokenService: TokenService,

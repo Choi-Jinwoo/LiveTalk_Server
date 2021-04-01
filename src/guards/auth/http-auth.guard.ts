@@ -1,4 +1,4 @@
-import { ExecutionContext } from '@nestjs/common';
+import { ExecutionContext, Injectable } from '@nestjs/common';
 import { HttpArgumentsHost } from '@nestjs/common/interfaces';
 import { TOKEN_KEY } from 'constants/token';
 import { Request } from 'express';
@@ -9,6 +9,7 @@ import { InvalidDataError } from 'errors/invalid-data.error';
 import { TokenService } from 'token/token.service';
 import { UserService } from 'user/user.service';
 
+@Injectable()
 export class HttpAuthGuard extends AuthGuard {
   constructor(
     tokenService: TokenService,
