@@ -11,7 +11,7 @@ import { ErrorCode } from 'errors/error-code.enum';
 
 @Injectable()
 export class UserService {
-  private readonly user$: Subject<User> = new Subject();
+  private readonly saveUser$: Subject<User> = new Subject();
 
   constructor(
     @InjectRepository(User)
@@ -23,13 +23,13 @@ export class UserService {
   }
 
   private subscribeUserSave() {
-    this.user$.subscribe({
+    this.saveUser$.subscribe({
       next: (user) => {
         this.userRepository.save(user);
       },
     });
 
-    this.user$.subscribe({
+    this.saveUser$.subscribe({
       next: async (user) => {
         const { id, dodamToken } = user;
 
@@ -57,7 +57,7 @@ export class UserService {
       throw new AuthFailedError(ErrorCode.LOGIN_FAILED);
     }
 
-    await this.user$.next(user);
+    await this.saveUser$.next(user);
 
     const token = this.tokenService.generate(user);
 
