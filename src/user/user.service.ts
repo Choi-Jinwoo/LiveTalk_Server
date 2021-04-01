@@ -59,7 +59,7 @@ export class UserService {
 
     await this.user$.next(user);
 
-    const token = this.tokenService.createToken(user);
+    const token = this.tokenService.generate(user);
 
     return token;
   }
