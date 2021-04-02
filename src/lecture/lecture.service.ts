@@ -6,6 +6,7 @@ import { DataNotFoundError } from 'errors/data-not-found.error';
 import { ErrorCode } from 'errors/error-code.enum';
 import { InvalidDataError } from 'errors/invalid-data.error';
 import { PermissionDenied } from 'errors/permission-denied.error';
+import { JoinColumn } from 'typeorm';
 import { UserService } from 'user/user.service';
 import { CharRandom, NumberRandom } from 'utils/random/random.util';
 import { CloseLectureDto } from './dto/close-lecture.dto';
@@ -26,10 +27,11 @@ export class LectureService {
   async create(createLectureDto: CreateLectureDto): Promise<Lecture> {
     const lecture = this.lectureRepository.create(createLectureDto);
 
-    lecture.adminCode = new NumberRandom(ADMIN_CODE_LENGTH).rand();
-    lecture.joinCode = new CharRandom(JOIN_CODE_LENGTH).rand();
-
-    const createdLecture = await this.lectureRepository.save(lecture);
+    const createdLecture = await this.lectureRepository.save({
+      ...lecture,
+      adminCode: new NumberRandom(ADMIN_CODE_LENGTH).rand(),
+      JoinColumn: new CharRandom(JOIN_CODE_LENGTH).rand(),
+    });
 
     return createdLecture;
   }
