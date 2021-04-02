@@ -17,6 +17,7 @@ import { Server, Socket } from 'socket.io';
 import { JoinSpecificLectureDto } from '../lecture/dto/join-specific-lecture.dto';
 import { LectureEvents } from './inquiry.event';
 import { LectureService } from 'lecture/lecture.service';
+import { Builder } from 'utils/builder/builder.util';
 
 @WebSocketGateway({ namespace: 'inquiry' })
 @UsePipes(ValidationPipe)
@@ -42,14 +43,17 @@ export class InquiryGateway implements IHasRoomGateway {
 
     const inquiry = await this.inquiryService.create(user, createInquiryDto);
 
-    // FIXME: 빌더 패턴을 활용하여 개선 필요
+    // FIXME: 개선이 필요
     let anonymityInquiry: AnonymityInquiryDto | null = null;
+
     if (inquiry.isAnonymity === true) {
-      anonymityInquiry = new AnonymityInquiryDto();
-      anonymityInquiry.id = inquiry.id;
-      anonymityInquiry.content = inquiry.content;
-      anonymityInquiry.lectureId = inquiry.lectureId;
-      anonymityInquiry.lecture = inquiry.lecture;
+      const { id, content, lectureId, lecture } = inquiry;
+      anonymityInquiry = Builder<AnonymityInquiryDto>()
+        .id(id)
+        .content(content)
+        .lectureId(lectureId)
+        .lecture(lecture)
+        .build();
     }
 
     this.server

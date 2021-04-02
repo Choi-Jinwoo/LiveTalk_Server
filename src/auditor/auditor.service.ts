@@ -5,6 +5,7 @@ import { Lecture } from 'entities/lecture.entity';
 import { User } from 'entities/user.entity';
 import { DataConflictError } from 'errors/data-conflict.error';
 import { ErrorCode } from 'errors/error-code.enum';
+import { Builder } from 'utils/builder/builder.util';
 import { AuditorRepository } from './auditor.repository';
 
 @Injectable()
@@ -22,9 +23,10 @@ export class AuditorService {
 
     const isAuditor = await this.isJoined(joinUser, lecture);
     if (!isAuditor) {
-      const auditor = new Auditor();
-      auditor.lecture = lecture;
-      auditor.user = joinUser;
+      const auditor = Builder<Auditor>()
+        .lecture(lecture)
+        .user(joinUser)
+        .build();
 
       await this.auditorRepository.save(auditor);
     }
@@ -40,9 +42,10 @@ export class AuditorService {
   }
 
   async create(user: User, lecture: Lecture) {
-    const auditor = new Auditor();
-    auditor.user = user;
-    auditor.lecture = lecture;
+    const auditor = Builder<Auditor>()
+      .lecture(lecture)
+      .user(user)
+      .build();
 
     this.auditorRepository.save(auditor);
   }

@@ -8,6 +8,7 @@ import { UserRepository } from './user.repository';
 import { Subject } from 'rxjs';
 import { AuthFailedError } from 'errors/auth-failed.error';
 import { ErrorCode } from 'errors/error-code.enum';
+import { Builder } from 'utils/builder/builder.util';
 
 @Injectable()
 export class UserService {
@@ -49,8 +50,9 @@ export class UserService {
 
     // 가입되지 않은 회원일 경우 새로운 회원 생성
     if (user === undefined) {
-      user = new User();
-      user.id = id;
+      user = Builder<User>()
+        .id(id)
+        .build();
     }
 
     // 토큰 갱신
