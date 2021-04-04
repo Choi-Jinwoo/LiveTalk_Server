@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { NestApplication } from '@nestjs/core';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ADMIN_CODE_LENGTH, JOIN_CODE_LENGTH } from 'constants/lecture';
 import { Lecture } from 'entities/lecture.entity';
@@ -6,8 +7,6 @@ import { DataNotFoundError } from 'errors/data-not-found.error';
 import { ErrorCode } from 'errors/error-code.enum';
 import { InvalidDataError } from 'errors/invalid-data.error';
 import { PermissionDenied } from 'errors/permission-denied.error';
-import { JoinColumn } from 'typeorm';
-import { UserService } from 'user/user.service';
 import { CharRandom, NumberRandom } from 'utils/random/random.util';
 import { CloseLectureDto } from './dto/close-lecture.dto';
 import { CreateLectureDto } from './dto/create-lecture.dto';
@@ -22,6 +21,15 @@ export class LectureService {
 
   async findOne(id: string): Promise<Lecture | undefined> {
     return this.lectureRepository.findOne(id);
+  }
+
+  async findOneOrFail(id: string): Promise<Lecture> {
+    const lecture = await this.findOne(id);
+    if (lecture === undefined) {
+      throw new DataNotFoundError(ErrorCode.LECTURE_NOT_FOUND);
+    }
+
+    return lecture;
   }
 
   async create(createLectureDto: CreateLectureDto): Promise<Lecture> {
@@ -54,6 +62,15 @@ export class LectureService {
 
     lecture.isClosed = true;
     return await this.lectureRepository.save(lecture);
+  }
+
+  async findOrFailByAdminCode(adminCode: string): Promise<Lecture> {
+    const lecture = await this.lectureRepository.findByAdminCode(adminCode);
+    if (lecture === undefined) {
+      throw new DataNotFoundError(ErrorCode.LECTURE_NOT_FOUND);
+    }
+
+    return lecture;
   }
 
   async findOrFailByJoinCode(joinCode: string): Promise<Lecture> {

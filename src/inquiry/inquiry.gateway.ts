@@ -18,6 +18,7 @@ import { JoinSpecificLectureDto } from '../lecture/dto/join-specific-lecture.dto
 import { LectureEvents } from './inquiry.event';
 import { LectureService } from 'lecture/lecture.service';
 import { Builder } from 'utils/builder/builder.util';
+import { JoinLecturerLectureDto } from 'lecture/dto/join-lecturer-lecture.dto';
 
 @WebSocketGateway({ namespace: 'inquiry' })
 @UsePipes(ValidationPipe)
@@ -63,6 +64,17 @@ export class InquiryGateway implements IHasRoomGateway {
       }));
   }
 
+  @SubscribeMessage(LectureEvents.JOIN_LECTURER_LECTURE)
+  async handleLecturerJoin(
+    @MessageBody() joinLectureDto: JoinLecturerLectureDto,
+    @ConnectedSocket() client: Socket,
+  ) {
+    const { adminCode } = joinLectureDto;
+    const lecture = await this.lectureService.findOrFailByAdminCode(adminCode);
+
+    client.join(this.composeRoomName(lecture.id));
+  }
+
   @SubscribeMessage(LectureEvents.JOIN_LECTURE)
   @UseGuards(SocketAuthGuard)
   async handleJoin(
@@ -70,11 +82,7 @@ export class InquiryGateway implements IHasRoomGateway {
     @MessageBody() joinLectureDto: JoinSpecificLectureDto,
     @ConnectedSocket() client: Socket) {
     const { id } = joinLectureDto;
-    const lecture = await this.lectureService.findOne(id);
-
-    if (lecture === undefined) {
-      throw new DataNotFoundError(ErrorCode.LECTURE_NOT_FOUND);
-    }
+    const lecture = await this.lectureService.findOneOrFail(id);
 
     const userIsJoined = await this.auditorService.isJoined(user, lecture);
     if (!userIsJoined) {
@@ -82,7 +90,7 @@ export class InquiryGateway implements IHasRoomGateway {
     }
 
     client.join(this.composeRoomName(id));
-    this.emitJoin(user, lecture);
+    this.emitJoinToRoom(user, lecture);
   }
 
   async emitClose(lecture: Lecture) {
@@ -93,7 +101,7 @@ export class InquiryGateway implements IHasRoomGateway {
       }));
   }
 
-  async emitJoin(user: User, lecture: Lecture) {
+  async emitJoinToRoom(user: User, lecture: Lecture) {
     const { id: userId } = user;
     const { id: lectureId } = lecture;
 
