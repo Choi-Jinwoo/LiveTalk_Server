@@ -12,22 +12,24 @@ export class Lecture {
   })
   title!: string;
 
-  @Column({
+  @Column('varchar', {
     name: 'join_code',
     unique: true,
+    nullable: true,
   })
-  joinCode!: string;
+  joinCode!: string | null;
 
   @Column({
     name: 'is_closed',
   })
   isClosed: boolean = false;
 
-  @Column({
+  @Column('varchar', {
     name: 'admin_code',
     unique: true,
+    nullable: true,
   })
-  adminCode!: string;
+  adminCode!: string | null;
 
   @Column({
     name: 'start_at',

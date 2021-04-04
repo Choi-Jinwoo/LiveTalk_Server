@@ -61,6 +61,8 @@ export class LectureService {
     }
 
     lecture.isClosed = true;
+    lecture.adminCode = null;
+    lecture.joinCode = null;
     return await this.lectureRepository.save(lecture);
   }
 
