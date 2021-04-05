@@ -1,4 +1,4 @@
-export enum LectureEvents {
+export enum InquiryEvents {
   CONNECT_ERROR = 'connect-error',
   USER_JOINED = 'user-joined',
   LECTURE_CLOSED = 'lecture-closed',
