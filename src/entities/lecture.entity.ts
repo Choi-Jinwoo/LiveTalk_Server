@@ -16,6 +16,7 @@ export class Lecture {
     name: 'join_code',
     unique: true,
     nullable: true,
+    select: false,
   })
   joinCode!: string | null;
 
@@ -28,6 +29,7 @@ export class Lecture {
     name: 'admin_code',
     unique: true,
     nullable: true,
+    select: false,
   })
   adminCode!: string | null;
 
