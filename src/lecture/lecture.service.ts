@@ -20,7 +20,7 @@ export class LectureService {
   ) { }
 
   async findOne(id: string): Promise<Lecture | undefined> {
-    return this.lectureRepository.findOne(id);
+    return this.lectureRepository.findSelectAll(id);
   }
 
   async findOneOrFail(id: string): Promise<Lecture> {
@@ -47,7 +47,7 @@ export class LectureService {
   async close(closeLectureDto: CloseLectureDto): Promise<Lecture> {
     const { lectureId, adminCode } = closeLectureDto;
 
-    const lecture = await this.lectureRepository.findOne(lectureId);
+    const lecture = await this.findOne(lectureId);
     if (lecture === undefined) {
       throw new DataNotFoundError(ErrorCode.LECTURE_NOT_FOUND);
     }
