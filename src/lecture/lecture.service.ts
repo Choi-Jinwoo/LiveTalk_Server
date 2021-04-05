@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { NestApplication } from '@nestjs/core';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ADMIN_CODE_LENGTH, JOIN_CODE_LENGTH } from 'constants/lecture';
 import { Lecture } from 'entities/lecture.entity';
@@ -20,7 +19,7 @@ export class LectureService {
   ) { }
 
   async findOne(id: string): Promise<Lecture | undefined> {
-    return this.lectureRepository.findSelectAll(id);
+    return this.lectureRepository.findOne(id);
   }
 
   async findOneOrFail(id: string): Promise<Lecture> {

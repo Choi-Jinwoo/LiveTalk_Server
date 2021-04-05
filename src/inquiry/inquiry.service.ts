@@ -30,12 +30,10 @@ export class InquiryService {
     }
 
     const inquiry = this.inquiryRepository.create(createInquiryDto);
+    inquiry.lecture = lecture;
+    inquiry.user = user;
 
-    this.inquiryRepository.save({
-      ...inquiry,
-      lecture,
-      user,
-    });
+    this.inquiryRepository.save(inquiry);
 
     return inquiry;
   }

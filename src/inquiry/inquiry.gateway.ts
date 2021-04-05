@@ -4,11 +4,9 @@ import { AuditorService } from 'auditor/auditor.service';
 import { ReqUser } from 'decorators/req-user.decorator';
 import { Lecture } from 'entities/lecture.entity';
 import { User } from 'entities/user.entity';
-import { DataNotFoundError } from 'errors/data-not-found.error';
 import { ErrorCode } from 'errors/error-code.enum';
 import { PermissionDenied } from 'errors/permission-denied.error';
 import { SocketAuthGuard } from 'guards/auth/socket-auth.guard';
-import { AnonymityInquiryDto } from 'inquiry/dto/anonymity-inquiry.dto';
 import { CreateInquiryDto } from 'inquiry/dto/create-inquiry.dto';
 import { InquiryService } from 'inquiry/inquiry.service';
 import { IHasRoomGateway } from 'interface/gateway/has-room-gateway.interface';
@@ -19,6 +17,7 @@ import { LectureEvents } from './inquiry.event';
 import { LectureService } from 'lecture/lecture.service';
 import { Builder } from 'utils/builder/builder.util';
 import { JoinLecturerLectureDto } from 'lecture/dto/join-lecturer-lecture.dto';
+import { InquiryRo } from './ro/inquiry.ro';
 
 @WebSocketGateway({ namespace: 'inquiry' })
 @UsePipes(ValidationPipe)
@@ -39,33 +38,20 @@ export class InquiryGateway implements IHasRoomGateway {
   @SubscribeMessage(LectureEvents.SEND_INQUIRY)
   @UseGuards(SocketAuthGuard)
   async handleSendInquiry(
-    @ReqUser() user: User,
+    @ReqUser() reqUser: User,
     @MessageBody() createInquiryDto: CreateInquiryDto) {
 
-    const { lectureId } = createInquiryDto;
+    const inquiry = await this.inquiryService.create(reqUser, createInquiryDto);
+    const inquiryRo = InquiryRo.fromInquiry(inquiry);
 
-    const inquiry = await this.inquiryService.create(user, createInquiryDto);
-    const lecture = await this.lectureService.findOneOrFail(lectureId);
-    inquiry.lecture = lecture;
-    inquiry.user = user;
-
-    // FIXME: 개선이 필요
-    let anonymityInquiry: AnonymityInquiryDto | null = null;
-
-    if (inquiry.isAnonymity === true) {
-      const { id, content, lectureId, lecture } = inquiry;
-      anonymityInquiry = Builder<AnonymityInquiryDto>()
-        .id(id)
-        .content(content)
-        .lectureId(lectureId)
-        .lecture(lecture)
-        .build();
+    if (inquiry.isAnonymity) {
+      inquiryRo.user = null;
     }
 
     this.server
-      .to(this.composeRoomName(inquiry.lecture.id))
+      .to(this.composeRoomName(inquiryRo.lecture.id))
       .emit(LectureEvents.NEW_INQUIRY, SocketBaseResponse.object('새로운 질문 등록', {
-        inquiry: anonymityInquiry ?? inquiry,
+        inquiry: inquiryRo,
       }));
   }
 
