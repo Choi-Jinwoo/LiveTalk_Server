@@ -17,6 +17,7 @@ import { InquiryEvents } from './inquiry.event';
 import { LectureService } from 'lecture/lecture.service';
 import { JoinLecturerLectureDto } from 'lecture/dto/join-lecturer-lecture.dto';
 import { InquiryRo } from './ro/inquiry.ro';
+import { SocketErrorResponse } from 'models/socket/socket-error.response';
 
 @WebSocketGateway({ namespace: 'inquiry' })
 @UsePipes(ValidationPipe)
@@ -49,7 +50,7 @@ export class InquiryGateway implements IHasRoomGateway {
 
     this.server
       .to(this.composeRoomName(inquiryRo.lecture.id))
-      .emit(InquiryEvents.NEW_INQUIRY, SocketBaseResponse.object('새로운 질문 등록', {
+      .emit(InquiryEvents.NEW_INQUIRY, SocketBaseResponse.object(200, '새로운 질문 등록', {
         inquiry: inquiryRo,
       }));
   }
@@ -59,10 +60,19 @@ export class InquiryGateway implements IHasRoomGateway {
     @MessageBody() joinLectureDto: JoinLecturerLectureDto,
     @ConnectedSocket() client: Socket,
   ) {
-    const { adminCode } = joinLectureDto;
-    const lecture = await this.lectureService.findOrFailByAdminCode(adminCode);
+    try {
+      const { adminCode } = joinLectureDto;
+      const lecture = await this.lectureService.findOrFailByAdminCode(adminCode);
 
-    client.join(this.composeRoomName(lecture.id));
+      client.join(this.composeRoomName(lecture.id));
+      client.emit(
+        InquiryEvents.JOIN_LECTURER_LECTURE,
+        SocketBaseResponse.object(200, '강의 접속 성공'));
+    } catch (err) {
+      client.emit(
+        InquiryEvents.JOIN_LECTURER_LECTURE,
+        SocketBaseResponse.object(404, '관리자 번호에 맞는 강의 업음'));
+    }
   }
 
   @SubscribeMessage(InquiryEvents.JOIN_LECTURE)
@@ -86,7 +96,7 @@ export class InquiryGateway implements IHasRoomGateway {
   async emitClose(lecture: Lecture) {
     this.server
       .to(this.composeRoomName(lecture.id))
-      .emit(InquiryEvents.LECTURE_CLOSED, SocketBaseResponse.object('강의 종료됨', {
+      .emit(InquiryEvents.LECTURE_CLOSED, SocketBaseResponse.object(200, '강의 종료됨', {
         lectureId: lecture.id,
       }));
   }
@@ -97,7 +107,7 @@ export class InquiryGateway implements IHasRoomGateway {
 
     this.server
       .to(this.composeRoomName(lectureId))
-      .emit(InquiryEvents.USER_JOINED, SocketBaseResponse.object('타회원의 강의 접속', {
+      .emit(InquiryEvents.USER_JOINED, SocketBaseResponse.object(200, '타회원의 강의 접속', {
         userId,
       }));
   }

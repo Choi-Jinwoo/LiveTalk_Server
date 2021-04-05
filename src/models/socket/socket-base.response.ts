@@ -1,10 +1,11 @@
 export class SocketBaseResponse {
   constructor(
+    public status: number,
     public message: string,
     public data?: any
   ) { }
 
-  static object(message: string, data?: any) {
-    return new SocketBaseResponse(message, data);
+  static object(status: number, message: string, data?: any) {
+    return new SocketBaseResponse(status, message, data);
   }
 }
