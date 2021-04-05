@@ -33,3 +33,7 @@ export const JWT = {
   SECRET: getValue('JWT_SECRET'),
   SUBJECT: getValue('JWT_SUBJECT'),
 }
+
+export const DODAM = {
+  API_KEY: getValue('DODAM_API_KEY'),
+}

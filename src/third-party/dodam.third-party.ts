@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import axios, { AxiosInstance } from 'axios';
+import { DODAM } from 'config/dotenv';
 import { DODAM_URL } from 'config/endpoint';
 import { ErrorCode } from 'errors/error-code.enum';
 import { ExpiredError } from 'errors/expired.error';
@@ -36,6 +37,10 @@ export class DodamThirdParty {
       const res = await this.axiosInstance.post(`${DODAM_URL}/auth/login`, {
         id,
         pw,
+      }, {
+        params: {
+          key: DODAM.API_KEY,
+        },
       });
 
       const { data: { data } } = res;
