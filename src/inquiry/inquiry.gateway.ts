@@ -42,7 +42,12 @@ export class InquiryGateway implements IHasRoomGateway {
     @ReqUser() user: User,
     @MessageBody() createInquiryDto: CreateInquiryDto) {
 
+    const { lectureId } = createInquiryDto;
+
     const inquiry = await this.inquiryService.create(user, createInquiryDto);
+    const lecture = await this.lectureService.findOneOrFail(lectureId);
+    inquiry.lecture = lecture;
+    inquiry.user = user;
 
     // FIXME: 개선이 필요
     let anonymityInquiry: AnonymityInquiryDto | null = null;
