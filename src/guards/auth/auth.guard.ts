@@ -5,11 +5,12 @@ import { AuthFailedError } from 'errors/auth-failed.error';
 import { DataNotFoundError } from 'errors/data-not-found.error';
 import { ErrorCode } from 'errors/error-code.enum';
 import { ExpiredError } from 'errors/expired.error';
+import { UseContext } from 'interface/nest/use-context.interface';
 import { TokenExpiredError } from 'jsonwebtoken';
 import { TokenService } from 'token/token.service';
 import { UserService } from 'user/user.service';
 
-export abstract class AuthGuard implements CanActivate {
+export abstract class AuthGuard implements CanActivate, UseContext {
   constructor(
     private readonly tokenService: TokenService,
     private readonly userService: UserService,

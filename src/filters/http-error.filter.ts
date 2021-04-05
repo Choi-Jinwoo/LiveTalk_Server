@@ -1,57 +1,55 @@
-import { ArgumentsHost, BadRequestException, Catch, ExceptionFilter, HttpStatus } from '@nestjs/common';
+import { ArgumentsHost, BadRequestException, Catch, ExceptionFilter, ExecutionContext, HttpStatus } from '@nestjs/common';
+import { CTX_HTTP_TYPE, CTX_WS_TYPE } from 'constants/request';
 import { AuthFailedError } from 'errors/auth-failed.error';
 import { DataConflictError } from 'errors/data-conflict.error';
 import { DataNotFoundError } from 'errors/data-not-found.error';
 import { ErrorCode } from 'errors/error-code.enum';
 import { ExpiredError } from 'errors/expired.error';
 import { InvalidDataError } from 'errors/invalid-data.error';
+import { Response } from 'express';
 import { ErrorResponse } from 'models/http/error.response';
+import { Socket } from 'socket.io';
 
 @Catch()
 export class HttpErrorFilter implements ExceptionFilter {
-  catch(err: any, host: ArgumentsHost) {
-    const ctx = host.switchToHttp();
-    const res = ctx.getResponse();
 
-    let errorResponse = null;
+  private errorToErrorResponse = (err: any) => {
     switch (err.constructor) {
-
       case BadRequestException:
-        errorResponse = ErrorResponse
+        return ErrorResponse
           .fromErrorCode(HttpStatus.BAD_REQUEST, ErrorCode.INVALID_INPUT);
-        break;
 
       case InvalidDataError:
-        errorResponse = ErrorResponse
+        return ErrorResponse
           .fromErrorCode(HttpStatus.BAD_REQUEST, err.errorCode);
-        break;
 
       case AuthFailedError:
-        errorResponse = ErrorResponse
+        return ErrorResponse
           .fromErrorCode(HttpStatus.UNAUTHORIZED, err.errorCode);
-        break;
 
       case DataNotFoundError:
-        errorResponse = ErrorResponse
+        return ErrorResponse
           .fromErrorCode(HttpStatus.NOT_FOUND, err.errorCode);
-        break;
 
       case DataConflictError:
-        errorResponse = ErrorResponse
+        return ErrorResponse
           .fromErrorCode(HttpStatus.CONFLICT, err.errorCode);
-        break;
 
       case ExpiredError:
-        errorResponse = ErrorResponse
+        return ErrorResponse
           .fromErrorCode(HttpStatus.GONE, err.errorCode);
-        break;
 
       default:
-        errorResponse = ErrorResponse
+        return ErrorResponse
           .fromErrorCode(HttpStatus.INTERNAL_SERVER_ERROR, ErrorCode.SERVER_ERROR);
     }
+  }
 
-    console.log(err);
+  catch(err: any, host: ArgumentsHost) {
+    const errorResponse = this.errorToErrorResponse(err);
+
+    const httpCtx = host.switchToHttp();
+    const res = httpCtx.getResponse<Response>();
     res.status(errorResponse.status).json(errorResponse);
   }
 }
