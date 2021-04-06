@@ -15,9 +15,8 @@ import { Server, Socket } from 'socket.io';
 import { JoinSpecificLectureDto } from '../lecture/dto/join-specific-lecture.dto';
 import { InquiryEvents } from './inquiry.event';
 import { LectureService } from 'lecture/lecture.service';
-import { JoinLecturerLectureDto } from 'lecture/dto/join-lecturer-lecture.dto';
+import { LecturerJoinDto } from 'lecture/dto/lecturer-join.dto';
 import { InquiryRo } from './ro/inquiry.ro';
-import { SocketErrorResponse } from 'models/socket/socket-error.response';
 
 @WebSocketGateway({ namespace: 'inquiry' })
 @UsePipes(ValidationPipe)
@@ -55,9 +54,9 @@ export class InquiryGateway implements IHasRoomGateway {
       }));
   }
 
-  @SubscribeMessage(InquiryEvents.JOIN_LECTURER_LECTURE)
+  @SubscribeMessage(InquiryEvents.LECTURER_JOIN)
   async handleLecturerJoin(
-    @MessageBody() joinLectureDto: JoinLecturerLectureDto,
+    @MessageBody() joinLectureDto: LecturerJoinDto,
     @ConnectedSocket() client: Socket,
   ) {
     try {
@@ -66,12 +65,12 @@ export class InquiryGateway implements IHasRoomGateway {
 
       client.join(this.composeRoomName(lecture.id));
       client.emit(
-        InquiryEvents.JOIN_LECTURER_LECTURE,
+        InquiryEvents.LECTURER_JOIN,
         SocketBaseResponse.object(200, '강의 접속 성공'));
     } catch (err) {
       client.emit(
-        InquiryEvents.JOIN_LECTURER_LECTURE,
-        SocketBaseResponse.object(404, '관리자 번호에 맞는 강의 업음'));
+        InquiryEvents.LECTURER_JOIN,
+        SocketBaseResponse.object(404, '관리자 번호에 맞는 강의 없음'));
     }
   }
 

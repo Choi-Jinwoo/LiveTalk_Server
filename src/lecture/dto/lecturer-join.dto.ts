@@ -1,6 +1,6 @@
 import { IsNotEmpty } from 'class-validator';
 
-export class JoinLecturerLectureDto {
+export class LecturerJoinDto {
   @IsNotEmpty()
   adminCode!: string;
 }

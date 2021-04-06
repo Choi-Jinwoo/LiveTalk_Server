@@ -17,6 +17,10 @@ export class InquiryService {
     private readonly auditorService: AuditorService,
   ) { }
 
+  async find(adminCode: string) {
+
+  }
+
   async create(user: User, createInquiryDto: CreateInquiryDto): Promise<Inquiry> {
     const { lectureId } = createInquiryDto;
     const lecture = await this.lectureService.findOne(lectureId);
