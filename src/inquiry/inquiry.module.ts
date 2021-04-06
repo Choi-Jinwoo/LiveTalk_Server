@@ -7,6 +7,7 @@ import { UserModule } from 'user/user.module';
 import { InquiryGateway } from './inquiry.gateway';
 import { InquiryRepository } from './inquiry.repository';
 import { InquiryService } from './inquiry.service';
+import { InquiryController } from './inquiry.controller';
 
 @Module({
   imports: [
@@ -20,5 +21,6 @@ import { InquiryService } from './inquiry.service';
   ],
   providers: [InquiryService, InquiryGateway],
   exports: [InquiryService, InquiryGateway],
+  controllers: [InquiryController],
 })
 export class InquiryModule { }
