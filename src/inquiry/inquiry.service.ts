@@ -18,9 +18,9 @@ export class InquiryService {
     private readonly auditorService: AuditorService,
   ) { }
 
-  async findWithPagination(adminCode: string, skip: number, take: number) {
+  async findWithPagination(adminCode: string, page: number, take: number) {
     const lecture = await this.lectureService.findOrFailByAdminCode(adminCode);
-    const inquires = await this.inquiryRepository.findByLecture(lecture.id, new Page(skip, take));
+    const inquires = await this.inquiryRepository.findByLecture(lecture.id, new Page(page, take));
 
     return inquires;
   }

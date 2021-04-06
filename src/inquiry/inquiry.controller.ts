@@ -12,12 +12,12 @@ export class InquiryController {
 
   @Get()
   async find(
-    @Query('skip') skip: number,
+    @Query('page') page: number,
     @Query('take') take: number,
     @Query('adminCode') adminCode: string,
   ) {
     const inquiries =
-      await this.inquiryService.findWithPagination(adminCode, skip, take);
+      await this.inquiryService.findWithPagination(adminCode, page, take);
 
     return BaseResponse.object('질문 조회 성공', {
       inquiries,
