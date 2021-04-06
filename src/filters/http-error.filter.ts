@@ -51,5 +51,6 @@ export class HttpErrorFilter implements ExceptionFilter {
     const httpCtx = host.switchToHttp();
     const res = httpCtx.getResponse<Response>();
     res.status(errorResponse.status).json(errorResponse);
+    console.log(err);
   }
 }

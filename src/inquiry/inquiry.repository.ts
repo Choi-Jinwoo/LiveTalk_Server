@@ -7,8 +7,9 @@ export class InquiryRepository extends Repository<Inquiry> {
   findByLecture(lectureId: string, page: Page) {
     return this.createQueryBuilder()
       .where('fk_lecture_id = :lectureId', { lectureId })
-      .skip(page.skip)
-      .take(page.take)
+      .offset(page.offset)
+      .limit(page.limit)
+      .orderBy('created_at', 'DESC')
       .getMany();
   }
 }

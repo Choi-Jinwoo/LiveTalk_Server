@@ -1,7 +1,15 @@
 export class Page {
 
   constructor(
-    readonly take: number,
-    readonly skip: number
+    private readonly skip: number,
+    private readonly take: number,
   ) { }
+
+  get offset() {
+    return this.take * this.skip;
+  }
+
+  get limit() {
+    return this.take;
+  }
 }
