@@ -101,13 +101,12 @@ export class InquiryGateway implements IHasRoomGateway {
   }
 
   async emitJoinToRoom(user: User, lecture: Lecture) {
-    const { id: userId } = user;
     const { id: lectureId } = lecture;
 
     this.server
       .to(this.composeRoomName(lectureId))
       .emit(InquiryEvents.USER_JOINED, SocketBaseResponse.object(200, '타회원의 강의 접속', {
-        userId,
+        user,
       }));
   }
 }

@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import axios, { AxiosInstance } from 'axios';
+import axios, { AxiosInstance, AxiosError } from 'axios';
 import { DODAM } from 'config/dotenv';
 import { DODAM_URL } from 'config/endpoint';
+import { AuthFailedError } from 'errors/auth-failed.error';
 import { ErrorCode } from 'errors/error-code.enum';
 import { ExpiredError } from 'errors/expired.error';
+import { UnexpectedError } from 'errors/unexpected.error';
 
 @Injectable()
 export class DodamThirdParty {
@@ -48,8 +50,32 @@ export class DodamThirdParty {
 
       return token;
     } catch (err) {
-      console.log(err);
-      throw err;
+      if (err.response) {
+        const { status } = err.response;
+        switch (status) {
+          case 401:
+            throw new AuthFailedError(ErrorCode.LOGIN_FAILED);
+
+          default:
+            throw new UnexpectedError(ErrorCode.SERVER_ERROR);
+        }
+      }
+
+      throw new UnexpectedError(ErrorCode.SERVER_ERROR);
+    }
+  }
+
+  async getProfile(token: string) {
+    try {
+      const res = await this.axiosInstance.get(`${DODAM_URL}/members/my`, {
+        headers: {
+          'x-access-token': token,
+        },
+      });
+
+      return res.data['data']['memberData'];
+    } catch (err) {
+      throw new UnexpectedError(ErrorCode.SERVER_ERROR);
     }
   }
 }

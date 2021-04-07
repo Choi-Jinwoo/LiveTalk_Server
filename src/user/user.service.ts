@@ -6,8 +6,6 @@ import { DodamThirdParty } from 'third-party/dodam.third-party';
 import { TokenService } from 'token/token.service';
 import { UserRepository } from './user.repository';
 import { Subject } from 'rxjs';
-import { AuthFailedError } from 'errors/auth-failed.error';
-import { ErrorCode } from 'errors/error-code.enum';
 import { Builder } from 'utils/builder/builder.util';
 
 @Injectable()
@@ -31,10 +29,10 @@ export class UserService {
     });
 
     this.saveUser$.subscribe({
-      next: async (user) => {
+      next: (user) => {
         const { id, dodamToken } = user;
 
-        await this.tokenService.save(id, dodamToken);
+        this.tokenService.save(id, dodamToken);
       },
     })
   }
@@ -46,25 +44,23 @@ export class UserService {
   async login(loginDto: LoginDto): Promise<string> {
     const { id, pw } = loginDto;
 
-    let user = await this.userRepository.findOne(id);
-
-    // 가입되지 않은 회원일 경우 새로운 회원 생성
-    if (user === undefined) {
-      user = Builder<User>()
-        .id(id)
-        .build();
-    }
-
     // 토큰 갱신
-    try {
-      const dodamToken = await this.dodamThirdParty.login(id, pw);
-      user.dodamToken = dodamToken;
-    } catch (err) {
-      throw new AuthFailedError(ErrorCode.LOGIN_FAILED);
-    }
+    const dodamToken = await this.dodamThirdParty.login(id, pw);
+    const profile = await this.dodamThirdParty.getProfile(dodamToken);
+
+    const { grade, room, number, accessLevel, profileImage } = profile;
+
+    const user = Builder<User>()
+      .id(id)
+      .dodamToken(dodamToken)
+      .grade(grade)
+      .room(room)
+      .number(number)
+      .accessLevel(accessLevel)
+      .profileImage(profileImage)
+      .build();
 
     await this.saveUser$.next(user);
-
     const token = this.tokenService.generate(user);
 
     return token;

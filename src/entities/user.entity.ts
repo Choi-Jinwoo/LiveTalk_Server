@@ -26,7 +26,7 @@ export class User {
   })
   room!: number | null;
 
-  @Column({
+  @Column('int', {
     name: 'number',
     nullable: true,
   })
@@ -37,4 +37,9 @@ export class User {
     enum: DodamAccessLevels,
   })
   accessLevel!: DodamAccessLevels;
+
+  @Column('varchar', {
+    name: 'profile_image',
+  })
+  profileImage!: string | null;
 }
