@@ -1,3 +1,4 @@
+import { DodamAccessLevels } from 'third-party/dodam.enum';
 import { Column, Entity, PrimaryColumn } from 'typeorm';
 
 @Entity('user')
@@ -12,4 +13,28 @@ export class User {
     select: false,
   })
   dodamToken!: string;
+
+  @Column('int', {
+    name: 'grade',
+    nullable: true,
+  })
+  grade!: number | null;
+
+  @Column('int', {
+    name: 'room',
+    nullable: true,
+  })
+  room!: number | null;
+
+  @Column({
+    name: 'number',
+    nullable: true,
+  })
+  number!: number | null;
+
+  @Column('enum', {
+    name: 'access_level',
+    enum: DodamAccessLevels,
+  })
+  accessLevel!: DodamAccessLevels;
 }
