@@ -9,7 +9,6 @@ export class InquiryRepository extends Repository<Inquiry> {
       .where('fk_lecture_id = :lectureId', { lectureId })
       .offset(page.offset)
       .limit(page.limit)
-      .orderBy('created_at', 'DESC')
       .getMany();
   }
 }
