@@ -9,6 +9,7 @@ import { LectureService } from 'lecture/lecture.service';
 import { Page } from 'utils/page/page.util';
 import { CreateInquiryDto } from './dto/create-inquiry.dto';
 import { InquiryRepository } from './inquiry.repository';
+import { InquiryRo } from './ro/inquiry.ro';
 
 @Injectable()
 export class InquiryService {
@@ -20,9 +21,20 @@ export class InquiryService {
 
   async findWithPagination(adminCode: string, page: number, take: number) {
     const lecture = await this.lectureService.findOrFailByAdminCode(adminCode);
-    const inquires = await this.inquiryRepository.findByLecture(lecture.id, new Page(page, take));
+    const inquires = await this.inquiryRepository.findByLectureWithUser(lecture.id, new Page(page, take));
+    const inquiryRoList = [];
+    for (const inquiry of inquires) {
+      inquiry.lecture = lecture;
 
-    return inquires;
+      const inquiryRo = InquiryRo.fromInquiry(inquiry);
+      if (inquiry.isAnonymity) {
+        inquiryRo.user = null;
+      }
+
+      inquiryRoList.push(inquiryRo);
+    }
+
+    return inquiryRoList;
   }
 
   async create(user: User, createInquiryDto: CreateInquiryDto): Promise<Inquiry> {

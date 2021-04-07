@@ -14,6 +14,11 @@ export class User {
   })
   dodamToken!: string;
 
+  @Column({
+    name: 'name',
+  })
+  name!: string;
+
   @Column('int', {
     name: 'grade',
     nullable: true,

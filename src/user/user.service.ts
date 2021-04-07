@@ -48,11 +48,12 @@ export class UserService {
     const dodamToken = await this.dodamThirdParty.login(id, pw);
     const profile = await this.dodamThirdParty.getProfile(dodamToken);
 
-    const { grade, room, number, accessLevel, profileImage } = profile;
+    const { name, grade, room, number, accessLevel, profileImage } = profile;
 
     const user = Builder<User>()
       .id(id)
       .dodamToken(dodamToken)
+      .name(name)
       .grade(grade)
       .room(room)
       .number(number)

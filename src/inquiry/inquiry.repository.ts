@@ -4,8 +4,9 @@ import { Page } from 'utils/page/page.util';
 
 @EntityRepository(Inquiry)
 export class InquiryRepository extends Repository<Inquiry> {
-  findByLecture(lectureId: string, page: Page) {
-    return this.createQueryBuilder()
+  findByLectureWithUser(lectureId: string, page: Page) {
+    return this.createQueryBuilder('inquiry')
+      .leftJoinAndSelect('inquiry.user', 'user')
       .where('fk_lecture_id = :lectureId', { lectureId })
       .offset(page.offset)
       .limit(page.limit)
