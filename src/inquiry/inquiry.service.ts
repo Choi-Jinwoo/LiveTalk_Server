@@ -34,6 +34,8 @@ export class InquiryService {
       inquiryRoList.push(inquiryRo);
     }
 
+    // 시간의 흐름에 맞게 reverse 하여 Return
+    inquiryRoList.reverse();
     return inquiryRoList;
   }
 
