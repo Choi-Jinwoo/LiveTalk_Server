@@ -2,6 +2,7 @@ import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { AuditorService } from 'auditor/auditor.service';
 import { ReqUser } from 'decorators/req-user.decorator';
 import { User } from 'entities/user.entity';
+import { HttpAuthGuard } from 'guards/auth/http-auth.guard';
 import { InquiryGateway } from 'inquiry/inquiry.gateway';
 import { BaseResponse } from 'models/http/base.response';
 import { CloseLectureDto } from './dto/close-lecture.dto';
@@ -27,6 +28,7 @@ export class LectureController {
   }
 
   @Post('join')
+  @UseGuards(HttpAuthGuard)
   async join(
     @ReqUser() user: User,
     @Body() joinLectureDto: JoinLectureDto): Promise<BaseResponse> {

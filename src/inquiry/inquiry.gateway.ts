@@ -39,7 +39,6 @@ export class InquiryGateway implements IHasRoomGateway {
   async handleSendInquiry(
     @ReqUser() reqUser: User,
     @MessageBody() createInquiryDto: CreateInquiryDto) {
-
     const inquiry = await this.inquiryService.create(reqUser, createInquiryDto);
     const inquiryRo = InquiryRo.fromInquiry(inquiry);
 
@@ -66,7 +65,7 @@ export class InquiryGateway implements IHasRoomGateway {
       client.join(this.composeRoomName(lecture.id));
       client.emit(
         InquiryEvents.LECTURER_JOIN,
-        SocketBaseResponse.object(200, '강의 접속 성공'));
+        SocketBaseResponse.object(200, '강의 접속 성공', { lecture }));
     } catch (err) {
       client.emit(
         InquiryEvents.LECTURER_JOIN,
