@@ -9,7 +9,7 @@ export class AuthController {
     private readonly userService: UserService,
   ) { }
 
-  @Post()
+  @Post('/login')
   async login(@Body() loginDto: LoginDto): Promise<BaseResponse> {
     const token = await this.userService.login(loginDto);
 
