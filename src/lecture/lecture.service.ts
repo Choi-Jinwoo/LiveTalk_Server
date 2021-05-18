@@ -37,7 +37,7 @@ export class LectureService {
     const createdLecture = await this.lectureRepository.save({
       ...lecture,
       adminCode: new NumberRandom(ADMIN_CODE_LENGTH).rand(),
-      JoinColumn: new CharRandom(JOIN_CODE_LENGTH).rand(),
+      joinCode: new CharRandom(JOIN_CODE_LENGTH).rand(),
     });
 
     return createdLecture;

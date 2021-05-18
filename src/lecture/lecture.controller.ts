@@ -36,7 +36,7 @@ export class LectureController {
     const lecture = await this.lectureService.findOrFailByJoinCode(joinCode);
     await this.auditorService.joinLecture(user, lecture);
 
-    return BaseResponse.object('강의 참여 성공');
+    return BaseResponse.object('강의 참여 성공', { lecture });
   }
 
   @Post('close')

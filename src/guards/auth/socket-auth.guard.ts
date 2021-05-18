@@ -25,6 +25,7 @@ export class SocketAuthGuard extends AuthGuard {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const client = this.switchContext(context).getClient<Socket>();
     const token = client.handshake.query[TOKEN_KEY];
+
     if (!isString(token)) {
       throw new InvalidDataError(ErrorCode.INVALID_INPUT);
     }
