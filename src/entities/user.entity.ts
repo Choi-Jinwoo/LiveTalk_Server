@@ -11,6 +11,7 @@ export class User {
   @Column({
     name: 'dodam_token',
     select: false,
+    length: 500,
   })
   dodamToken!: string;
 
