@@ -6,14 +6,16 @@ export class LectureRo {
   title!: string;
   isClosed!: boolean;
   createdAt!: Date;
+  lecturer!: string;
 
   static fromLecture(lecture: Lecture): LectureRo {
-    const { id, title, isClosed, createdAt } = lecture;
+    const { id, title, isClosed, lecturer, createdAt } = lecture;
     return Builder<LectureRo>()
       .id(id)
       .title(title)
       .isClosed(isClosed)
       .createdAt(createdAt)
+      .lecturer(lecturer)
       .build();
   }
 }

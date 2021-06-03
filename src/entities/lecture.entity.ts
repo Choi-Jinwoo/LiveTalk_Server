@@ -33,6 +33,11 @@ export class Lecture {
   })
   adminCode!: string | null;
 
+  @Column({
+    name: 'lecturer',
+  })
+  lecturer!: string;
+
   @CreateDateColumn({
     name: 'created_at',
   })

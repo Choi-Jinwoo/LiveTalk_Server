@@ -4,4 +4,8 @@ export class CreateLectureDto {
   @IsNotEmpty()
   @Length(0, 100)
   title!: string;
+
+  @IsNotEmpty()
+  @Length(0, 100)
+  lecturer!: string;
 }
