@@ -6,7 +6,7 @@ export class LectureRepository extends Repository<Lecture> {
   findAllAttributes(id: string): Promise<Lecture | undefined> {
     return this.findOne(id, {
       select: [
-        'id', 'title', 'joinCode', 'isClosed', 'adminCode', 'startAt', 'endAt', 'createdAt'
+        'id', 'title', 'joinCode', 'isClosed', 'adminCode', 'createdAt'
       ],
     })
   }

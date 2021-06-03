@@ -33,16 +33,6 @@ export class Lecture {
   })
   adminCode!: string | null;
 
-  @Column({
-    name: 'start_at',
-  })
-  startAt!: Date;
-
-  @Column({
-    name: 'end_at',
-  })
-  endAt!: Date;
-
   @CreateDateColumn({
     name: 'created_at',
   })
