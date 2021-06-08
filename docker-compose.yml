@@ -1,0 +1,52 @@
+version: "3.7"
+
+services: 
+  server:
+    env_file:
+      - .env
+    depends_on: 
+      - mysql
+      - redis
+    ports: 
+      - "3000:3000"
+    build: .
+    environment:
+      PORT: 3000
+      MYSQL_HOST: mysql
+      MYSQL_PORT: ${MYSQL_PORT}
+      MYSQL_USERNAME: ${MYSQL_USERNAME}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_SYNC: ${MYSQL_SYNC}
+
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+
+      JWT_EXPIRES_IN: 5 days
+      JWT_ISSUER: ask
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_SUBJECT: token
+      
+      DODAM_API_KEY: ${DODAM_API_KEY}
+
+  mysql:
+    image: mysql:5.7
+    volumes: 
+      - ask-mysql-data:/var/lib/mysqls
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    env_file: 
+      - mysql.env
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DATABASE=ask
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_USER=${MYSQL_USER}
+
+  redis:
+    image: redis:latest
+  
+  
+volumes: 
+  ask-mysql-data:
