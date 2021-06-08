@@ -51,7 +51,7 @@ export class UserService {
     const { name, grade, room, number, accessLevel, profileImage } = profile;
 
     const user = Builder<User>()
-      .id(id)
+      .id(id.toLowerCase())
       .dodamToken(dodamToken)
       .name(name)
       .grade(grade)
