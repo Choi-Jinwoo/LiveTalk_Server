@@ -16,7 +16,6 @@ export class Lecture {
     name: 'join_code',
     unique: true,
     nullable: true,
-    select: false,
   })
   joinCode!: string | null;
 
