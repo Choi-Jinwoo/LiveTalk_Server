@@ -11,7 +11,7 @@ services:
       - "3333:3333"
     build: .
     environment:
-      PORT: 3000
+      PORT: ${PORT}
       MYSQL_HOST: mysql
       MYSQL_PORT: ${MYSQL_PORT}
       MYSQL_USERNAME: ${MYSQL_USERNAME}
