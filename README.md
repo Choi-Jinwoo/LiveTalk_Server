@@ -25,7 +25,7 @@ LIVE TALK은 교내 실시간 질의 응답 서비스입니다.
 
 - NodeJS
 - RxJS
-- NextJS
+- NestJS
 - TypeScript
 - MySQL
 - TypeORM
